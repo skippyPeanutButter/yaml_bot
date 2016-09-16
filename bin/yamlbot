@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'optparse'
+
+banner = <<-eos
+I am
+__    ____  ___      .___  ___.  __      .______     ______   .___________.
+\   \  /   / /   \     |   \/   | |  |     |   _  \   /  __  \  |           |
+ \   \/   / /  ^  \    |  \  /  | |  |     |  |_)  | |  |  |  | `---|  |----`
+  \_    _/ /  /_\  \   |  |\/|  | |  |     |   _  <  |  |  |  |     |  |
+    |  |  /  _____  \  |  |  |  | |  `----.|  |_)  | |  `--'  |     |  |
+    |__| /__/     \__\ |__|  |__| |_______||______/   \______/      |__|
+
+feed me YAML!
+eos
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = banner
+  opts.banner += "Usage: yamlbot [options] <file(s) or folder(s)>"
+
+  opts.on('-r', '--rule-file', 'The rules you will be evaluating your yaml against') do |rules|
+    options[:rules] = rules
+  end
+end.parse!
+
+begin
+  rules_file = '.yamlbot.yml'
+  rules_file = options[:rules] unless options[:rules].nil?
+  YAML.load(File.open(rules_file))
+rescue Exception => e
+  puts "Rules file not located.\n"
+  puts "Feed me yaml!"
+  puts "\n\nEnter yamlbot -h for help documentation"
+  exit 1
+end
+
+ARGV.each do |file|
+  bot = YamlBot.new(file, rules_file)
+  result = bot.scan
+end
+
+puts 'YAMLBOT has finished scanning...'
+exit result

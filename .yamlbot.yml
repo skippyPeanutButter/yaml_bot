@@ -1,0 +1,19 @@
+root_keys:
+  required:
+    key1:
+      subkeys:
+        - subkey1:
+            accepted_types:
+              - String
+              - List
+          subkey2:
+            accepted_types:
+              - Integer
+    key2:
+      - String
+    key3:
+      - Boolean
+
+  optional:
+    key1:
+      - Integer
