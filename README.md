@@ -1,10 +1,15 @@
 # YamlBot
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/yaml_bot`. To experiment with that code, run `bin/console` for an interactive prompt.
+YamlBot is not a Yaml linter, it is a Yaml format validator.
 
-TODO: Delete this and the text above, and describe your gem
 
-## Installation
+### Why
+
+Specify custom rules for different Yaml files.
+You should be able to feed YamlBot a specification for how a Yaml file
+should look and then let it do the rest.
+
+### Installation
 
 Add this line to your application's Gemfile:
 
@@ -20,22 +25,22 @@ Or install it yourself as:
 
     $ gem install yaml_bot
 
-## Usage
+### Usage
 
-TODO: Write usage instructions here
+Usage: yamlbot [options] <file(s) or folder(s)>
 
-## Development
+### Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-## Contributing
+### Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/yaml_bot. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
-## License
+### License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 

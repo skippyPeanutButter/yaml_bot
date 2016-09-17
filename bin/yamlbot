@@ -16,14 +16,15 @@ feed me YAML!
 eos
 
 options = {}
-OptionParser.new do |opts|
+parser = OptionParser.new do |opts|
   opts.banner = banner
   opts.banner += "Usage: yamlbot [options] <file(s) or folder(s)>"
 
   opts.on('-r', '--rule-file', 'The rules you will be evaluating your yaml against') do |rules|
     options[:rules] = rules
   end
-end.parse!
+end
+parser.parse!
 
 begin
   rules_file = '.yamlbot.yml'
@@ -38,8 +39,8 @@ end
 
 ARGV.each do |file|
   bot = YamlBot::YamlBot.new(file, rules_file)
-  result = bot.scan
+  #result = bot.scan
 end
 
 puts 'YAMLBOT has finished scanning...'
-exit result
+#exit result
