@@ -37,7 +37,7 @@ rescue Exception => e
 end
 
 ARGV.each do |file|
-  bot = YamlBot.new(file, rules_file)
+  bot = YamlBot::YamlBot.new(file, rules_file)
   result = bot.scan
 end
 
