@@ -1,19 +1,54 @@
 root_keys:
   required:
-    key1:
+    language:
+      accepted_types:
+        - String
+    rvm:
+      accepted_types:
+        - String
+    before_install:
+      accepted_types:
+        - String
+        - Array
+    install:
+      accepted_types:
+        - String
+        - Array
+    script:
+      accepted_types:
+        - String
+        - Array
+    jenkins:
       subkeys:
-        - subkey1:
+        required:
+          secrets_id:
             accepted_types:
               - String
-              - List
-          subkey2:
-            accepted_types:
-              - Integer
-    key2:
-      - String
-    key3:
-      - Boolean
-
+          secrets:
+            subkeys:
+              required:
+                key:
+                  accepted_types:
+                    - String
+                secret:
+                  accepted_types:
+                    - String
+    pipeline:
+      subkeys:
+        required:
+          script:
+            subkeys:
+              required:
+                stage:
+                  accepted_types:
+                    - String
+                steps:
+                  subkeys:
+                    required:
+                      input:
+                        subkeys:
+                          required:
+                            message:
+                              accepted_types:
+                                - String
   optional:
-    key4:
-      - Integer

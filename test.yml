@@ -1,0 +1,44 @@
+language: ruby
+rvm: "2.3.1"
+before_install:
+  - gem install bundler -v $(cat .bundler-version)
+install: bundle install
+script: bundle exec rake
+jenkins:
+  secrets_id: my-secret-id
+  secrets:
+    - key: CF_USERNAME
+      secret: <SOME_ENCRYPTED_TEXT>
+    - key: CF_PASSWORD
+      secret: <SOME_OTHER_ENCRYPTED_TEXT>
+  collect:
+    artifacts: '**/*'
+pipeline:
+  script:
+    - stage: Deploy to Prod
+      steps:
+        #- invalid_key: 'invalid'
+        - input:
+            message: Are you sure you want to continue?
+            ok: Press me
+        - checkpoint: Saving progress here!
+        - stage: Some sub-stage
+        - node:
+            labels: some-env
+            steps:
+              - shell: ./something.sh
+        - parallel:
+            East Coast:
+              - node:
+                  labels: east-coast
+                  steps:
+                    - shell: REGION=EAST ./deploy.sh
+            West Coast:
+              - node:
+                  labels: west-coast
+                  steps:
+                    - shell: REGION=WEST ./deploy.sh
+        - node:
+           labels: some-other-env
+           steps:
+             - shell: ./something-else.sh

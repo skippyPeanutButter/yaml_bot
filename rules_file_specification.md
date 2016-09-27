@@ -16,14 +16,21 @@ root_keys:
           subkey2:
             accepted_types:
               - Integer
+        optional:
+          subkey3:
+            accepted_types:
+              - Integer
     key2:
-      - String
+      accepted_types:
+        - String
     key3:
-      - Boolean
+      accepted_types:
+        - Boolean
 
   optional:
     key4:
-      - Integer
+      accepted_types:
+        - Integer
 ```
 
 1. `root_keys` - the yaml keys that are specified as being at the top-most
@@ -32,7 +39,7 @@ root_keys:
       necessary for a properly formatted yaml file. The `required` key may be
       listed below the `root_keys` key and the `subkeys` key.
       This key is required in a rules file.
-  ii. `optional` - keys nested directly below an optional key are may be missing
+  ii. `optional` - keys nested directly below an optional key may be missing
        from a properly formatted yaml file. The purpose of listing optional keys
        are to validate they contain the values the keys are given if they are
        included. The `optional` key may be listed below the `root_keys` key and
