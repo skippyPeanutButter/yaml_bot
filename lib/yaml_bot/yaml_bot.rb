@@ -1,5 +1,6 @@
 require 'yaml'
 require 'yaml_bot'
+require_relative 'rules_bot'
 
 module YamlBot
   class YamlBot
@@ -20,9 +21,8 @@ module YamlBot
 
     def scan
       # Validate .yamlbot/rules file
+      RulesBot.scan(@rules)
       check_root_keys(@rules, @yaml_file)
-      check_opt_keys(@rules, @yaml_file)
-      #raise
     end
 
     def check_root_keys(rules, yaml)
@@ -32,7 +32,7 @@ module YamlBot
       required_root_keys = rules['root_keys']['required'].keys
       required_root_keys.each do |k|
         if !yaml.keys.include?(k)
-          puts "Missing required key #{k}\n\n"
+          warn "Missing required key #{k}\n\n"
           YamlBot.violation
         end
       end
@@ -54,7 +54,7 @@ module YamlBot
       end
 
       if !optional_root_keys.empty?
-
+        required_keys(rules['root_keys']['optional'], yaml)
       end
     end
 
@@ -81,10 +81,6 @@ module YamlBot
           end
         end
       end
-    end
-
-    def optional_keys(rules, yaml)
-
     end
 
     def check_accepted_type(type_list, yaml, key)

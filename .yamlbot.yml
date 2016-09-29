@@ -1,9 +1,6 @@
 root_keys:
-  required:
+  require:
     language:
-      accepted_types:
-        - String
-    rvm:
       accepted_types:
         - String
     before_install:
@@ -51,4 +48,7 @@ root_keys:
                             message:
                               accepted_types:
                                 - String
-  optional:
+  optiona:
+    rvm:
+      accepted_types:
+        - String
