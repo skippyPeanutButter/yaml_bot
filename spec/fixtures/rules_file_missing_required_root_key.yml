@@ -1,0 +1,5 @@
+root_keys:
+  optional:
+    - key:
+        accepted_types:
+          - Integer
