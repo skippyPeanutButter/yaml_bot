@@ -1,0 +1,5 @@
+root_keys:
+  required:
+    - key1:
+        accepted_types:
+          - Invalidtype
