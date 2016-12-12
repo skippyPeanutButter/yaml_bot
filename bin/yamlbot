@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift(File.dirname(File.realpath(__FILE__)) + '/../lib')
+
 require 'yaml'
 require 'optparse'
 require 'yaml_bot'
+require 'yaml_bot/rules_bot'
+#require 'benchmark'
 
 banner = <<-eos
 I am feed me YAML!
@@ -23,21 +26,13 @@ parser = OptionParser.new do |opts|
 end
 parser.parse!
 
-begin
-  file = 'test.yml'
-  rules_file = '.yamlbot.yml'
-  rules_file = options[:rules] unless options[:rules].nil?
-  bot = YamlBot::YamlBot.new(file, rules_file)
-  bot.scan
-rescue Exception => e
-  puts e.message
-  puts e.backtrace
-  # puts "Rules file not located.\n"
-  # puts "Feed me yaml!"
-  # puts "Enter yamlbot -h for help documentation\n"
-  exit 1
-end
+rules_file = YAML.load(File.open(options[:rules]))
+yaml_file = YAML.load(File.open(options[:file]))
+
+rules_bot = RulesBot.new
+rules_bot.rules = rules_file
+rules_bot.validate_rules
 
 puts 'YAMLBOT finished scanning...'
-puts "#{YamlBot::YamlBot.get_violations} violations"
+#puts "#{YamlBot::YamlBot.get_violations} violations"
 #exit result
