@@ -1,0 +1,18 @@
+root_keys:
+  required:
+    - key1:
+        accepted_types:
+          - String
+    - key2:
+        accepted_types:
+          - String
+          - Array
+    - key3:
+        accepted_types:
+          - String
+          - Array
+
+  optional:
+    - key4:
+        accepted_types:
+          - Boolean
