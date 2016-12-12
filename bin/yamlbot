@@ -4,7 +4,6 @@ $LOAD_PATH.unshift(File.dirname(File.realpath(__FILE__)) + '/../lib')
 require 'yaml'
 require 'optparse'
 require 'yaml_bot'
-require 'yaml_bot/rules_bot'
 #require 'benchmark'
 
 banner = <<-eos
@@ -32,6 +31,11 @@ yaml_file = YAML.load(File.open(options[:file]))
 rules_bot = RulesBot.new
 rules_bot.rules = rules_file
 rules_bot.validate_rules
+
+yaml_bot = ValidationBot.new
+yaml_bot.rules = rules_file
+yaml_bot.yaml_file = yaml_file
+yaml_bot.scan
 
 puts 'YAMLBOT finished scanning...'
 #puts "#{YamlBot::YamlBot.get_violations} violations"
