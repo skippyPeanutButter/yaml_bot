@@ -1,6 +1,5 @@
 require 'yaml'
 require 'yaml_bot/rules_bot'
-require 'yaml_bot/logging'
 
 module YamlBot
   class IngestBot
@@ -20,18 +19,10 @@ module YamlBot
     end
 
     def scan
-      # Validate .yamlbot/rules file
-      RulesBot.scan(@rules)
-      missing_required_keys = false
-      missing_optional_keys = false
-      if @rules['root_keys']['required'].nil?
-        missing_required_keys = true
-        info 'No required keys specified.'
-      end
-      if @rules['root_keys']['optional'].nil?
-        missing_optional_keys = true
-        info 'No optional keys specified.'
-      end
+      rules_bot = RulesBot.new
+      rules_bot.rules = @rules
+      rules_bot.validate_rules
+
     end
   end
 end
