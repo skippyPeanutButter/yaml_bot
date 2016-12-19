@@ -20,5 +20,9 @@ describe YamlBot::ValidationBot do
       @yaml_bot.yaml_file = yaml
       expect { @yaml_bot.scan }.to raise_error(YamlBot::ValidationError)
     end
+
+    it 'is initialized with 0 violations' do
+      expect(@yaml_bot.violations).to eq(0)
+    end
   end
 end

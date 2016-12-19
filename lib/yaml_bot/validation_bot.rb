@@ -8,10 +8,12 @@ module YamlBot
     attr_accessor :rules, :yaml_file, :violations
 
     def initialize
-      violations = 0
+      self.violations = 0
     end
 
     def scan
+      YamlBot::Logging.info 'Beginning scan...'
+
       if rules.nil? || yaml_file.nil?
         msg = "Rules file, or Yaml file is not set\n"
         raise YamlBot::ValidationError.new(msg)
@@ -24,6 +26,8 @@ module YamlBot
       if !rules['root_keys']['optional'].nil?
         validate_optional_keys yaml_file, rules['root_keys']['optional']
       end
+
+      YamlBot::Logging.info 'Finished scanning...'
     end
 
     private
@@ -42,10 +46,11 @@ module YamlBot
             end
           else
             if
-            validate_accepted_types yaml[key], required_keys[index][key]['accepted_types'], key
+              validate_accepted_types yaml[key], required_keys[index][key]['accepted_types'], key
+            end
           end
         else
-          violations = violations + 1
+          self.violations += 1
           YamlBot::Logging.error "Missing required key: #{key}"
         end
       end
@@ -65,7 +70,8 @@ module YamlBot
             end
           else
             if
-            validate_accepted_types yaml[key], optional_keys[index][key]['accepted_types'], key
+              validate_accepted_types yaml[key], optional_keys[index][key]['accepted_types'], key
+            end
           end
         else
           YamlBot::Logging.info "Not utilizing optional key: #{key}"
@@ -75,7 +81,7 @@ module YamlBot
 
     def validate_accepted_types(value, accepted_types, key)
       if !accepted_types.include?(value.class.to_s)
-        violations = violations + 1
+        self.violations += 1
         msg = "Value: #{value} is not a valid type for key: #{key}\n"
         msg += "Valid types for key #{key} include: #{accepted_types}\n"
         YamlBot::Logging.error msg
