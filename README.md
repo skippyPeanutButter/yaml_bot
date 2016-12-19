@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/skippyPeanutButter/yaml_bot.svg?branch=master)](https://travis-ci.org/skippyPeanutButter/yaml_bot)
+
 # YamlBot
 
 YamlBot is not a Yaml linter, it is a Yaml format validator.
@@ -43,4 +45,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ### License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
