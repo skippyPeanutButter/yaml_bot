@@ -59,7 +59,7 @@ describe YamlBot::RulesBot do
     end
 
     it 'raises no ValidationError when it does not find an invalid accepted type' do
-      type = {'accepted_types'=>['Integer', 'String']}
+      type = {'accepted_types'=>['Fixnum', 'String']}
       expect{ @rules_bot.validate_accepted_types(type) }.not_to raise_error
     end
   end
