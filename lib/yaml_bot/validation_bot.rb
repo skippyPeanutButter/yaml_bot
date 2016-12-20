@@ -82,7 +82,7 @@ module YamlBot
     def validate_accepted_types(value, accepted_types, key)
       if !accepted_types.include?(value.class.to_s)
         self.violations += 1
-        msg = "Value: #{value.class.to_s} is not a valid type for key: #{key}\n"
+        msg = "Value: #{value} of class #{value.class} is not a valid type for key: #{key}\n"
         msg += "Valid types for key #{key} include: #{accepted_types}\n"
         YamlBot::Logging.error msg
       end

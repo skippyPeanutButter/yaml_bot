@@ -35,7 +35,20 @@ describe YamlBot::ValidationBot do
         @yaml_bot.rules = rules
       end
 
-      it 'logs an error message and increases the violation count when a key has a value of an invalid type'
+      it 'logs an error message and increases the violation count when a key has a value of an invalid type' do
+        rules = {"root_keys"=>{"required"=>[{"key"=>{"accepted_types"=>["Fixnum"]}}]}}
+        yaml_file = {"key"=>true}
+        @yaml_bot.rules = rules
+        @yaml_bot.yaml_file = yaml_file
+        accepted_types = ["Fixnum"]
+        key = 'key'
+        value = true
+        msg = "Value: #{value} of class #{value.class} is not a valid type for key: #{key}\n"
+
+        expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
+        expect(@yaml_bot.violations).to eq(1)
+      end
+
       it 'logs an error message and increases the violation count when a required key is missing' do
         violation_count = 0
         [
@@ -54,8 +67,32 @@ describe YamlBot::ValidationBot do
       end
     end
 
-    context 'yaml files are successfully validated' do
+    context 'yaml files that are successfully validated' do
+      before :each do
+        @yaml_bot  = YamlBot::ValidationBot.new
+        rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
+                 '/../fixtures/valid_rules_file.yml'))
+        @yaml_bot.rules = rules
+      end
 
+      it 'counts zero violations' do
+        file = 'valid_yaml_bot_file.yml'
+        @yaml_bot.yaml_file = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) + "/../fixtures/#{file}"))
+        @yaml_bot.scan
+
+        expect(@yaml_bot.violations).to eq(0)
+      end
+    end
+
+    context 'rules files containing only optional keys' do
+      it 'allows empty yaml files' do
+        file = 'valid_rules_file_only_optional_keys.yml'
+        @yaml_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) + "/../fixtures/#{file}"))
+        @yaml_bot.yaml_file = {}
+        @yaml_bot.scan
+
+        expect(@yaml_bot.violations).to eq(0)
+      end
     end
   end
 end

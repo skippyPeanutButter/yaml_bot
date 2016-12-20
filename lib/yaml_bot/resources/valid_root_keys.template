@@ -1,8 +1,0 @@
-root_keys:
-  required:
-    key1:
-      ....
-
-  optional:
-    key2:
-      ...
