@@ -3,5 +3,6 @@
 - Integer
 - Array
 - Hash
-- Boolean
+- TrueClass
+- FalseClass
 - Float

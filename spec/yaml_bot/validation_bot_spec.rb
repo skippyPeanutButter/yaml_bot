@@ -29,6 +29,7 @@ describe YamlBot::ValidationBot do
 
     context 'yaml files violating yamlbot rules file specification' do
       before :each do
+        @yaml_bot  = YamlBot::ValidationBot.new
         rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
                  '/../fixtures/valid_rules_file.yml'))
         @yaml_bot.rules = rules
@@ -36,6 +37,7 @@ describe YamlBot::ValidationBot do
 
       it 'logs an error message and increases the violation count when a key has a value of an invalid type'
       it 'logs an error message and increases the violation count when a required key is missing' do
+        violation_count = 0
         [
           'invalid_yaml_bot_file_missing_required_key1.yml',
           'invalid_yaml_bot_file_missing_required_key2.yml',
@@ -44,7 +46,10 @@ describe YamlBot::ValidationBot do
           yaml = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) + "/../fixtures/#{file}"))
           @yaml_bot.yaml_file = yaml
           msg = 'Missing required key: key'
+          violation_count += 1
+
           expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
+          expect(@yaml_bot.violations).to eq(violation_count)
         end
       end
     end
