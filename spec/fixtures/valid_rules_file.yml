@@ -9,19 +9,20 @@ root_keys:
                   - List
             - subkey2:
                 accepted_types:
-                  - Integer
+                  - Fixnum
           optional:
             - subkey3:
                 accepted_types:
-                  - Integer
+                  - Fixnum
     - key2:
         accepted_types:
           - String
     - key3:
         accepted_types:
-          - Boolean
+          - TrueClass
+          - FalseClass
 
   optional:
     - key4:
         accepted_types:
-          - Integer
+          - Fixnum
