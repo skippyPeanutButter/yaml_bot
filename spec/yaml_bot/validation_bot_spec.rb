@@ -21,7 +21,7 @@ describe YamlBot::ValidationBot do
 
       it 'raises a validation error when a rules file is not set' do
         yaml  = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-                 '/../fixtures/valid_yaml_bot_file.yml'))
+                 '/../fixtures/valid_yaml_file.yml'))
         @yaml_bot.yaml_file = yaml
         expect { @yaml_bot.scan }.to raise_error(YamlBot::ValidationError)
       end
@@ -76,7 +76,7 @@ describe YamlBot::ValidationBot do
       end
 
       it 'counts zero violations' do
-        file = 'valid_yaml_bot_file.yml'
+        file = 'valid_yaml_file.yml'
         @yaml_bot.yaml_file = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) + "/../fixtures/#{file}"))
         @yaml_bot.scan
 
