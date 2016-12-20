@@ -78,10 +78,7 @@ v. `accepted_types` - key that is nested below a user defined key. It
 
      This key is required, if the parent key does not have a `subkeys` key.
 
-### Order of validation
-
-1. Validate a correct rules file
-  a. Check that at least either a required, or optional keys file has been set.
+```
 
 ### Types
 
