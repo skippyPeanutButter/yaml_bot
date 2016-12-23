@@ -40,7 +40,6 @@ describe YamlBot::ValidationBot do
         yaml_file = {"key"=>true}
         @yaml_bot.rules = rules
         @yaml_bot.yaml_file = yaml_file
-        accepted_types = ["Fixnum"]
         key = 'key'
         value = true
         msg = "Value: #{value} of class #{value.class} is not a valid type for key: #{key}\n"
@@ -58,7 +57,7 @@ describe YamlBot::ValidationBot do
         ].each do |file|
           yaml = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) + "/../fixtures/#{file}"))
           @yaml_bot.yaml_file = yaml
-          msg = 'Missing required key: key'
+          msg = 'Missing required key:'
           violation_count += 1
 
           expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
