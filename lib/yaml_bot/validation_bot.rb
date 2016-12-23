@@ -20,11 +20,11 @@ module YamlBot
       end
 
       if !rules['root_keys']['required'].nil?
-        validate_required_keys yaml_file, rules['root_keys']['required']
+        validate_keys yaml_file, rules['root_keys']['required'], [], 'required'
       end
 
       if !rules['root_keys']['optional'].nil?
-        validate_optional_keys yaml_file, rules['root_keys']['optional']
+        validate_keys yaml_file, rules['root_keys']['optional'], [], 'optional'
       end
 
       YamlBot::Logging.info 'Finished scanning...'
@@ -32,49 +32,33 @@ module YamlBot
 
     private
 
-    def validate_required_keys(yaml, required_keys)
-      required_keys.each_with_index do |key_map, index|
+    def validate_keys(yaml, keys, parent_keys, key_type)
+      keys.each_with_index do |key_map, index|
         key = key_map.keys.first
+        puts "Validating key #{key}"
+        ancestors = parent_keys.dup << key
         if yaml.keys.include?(key)
-          if !required_keys[index][key]['subkeys'].nil?
-            if !required_keys[index][key]['subkeys']['required'].nil?
-              validate_required_keys yaml[key], required_keys[index][key]['subkeys']['required']
+          if !keys[index][key]['subkeys'].nil?
+            if !keys[index][key]['subkeys']['required'].nil?
+              validate_keys yaml[key], keys[index][key]['subkeys']['required'], ancestors, 'required'
             end
 
-            if !required_keys[index][key]['subkeys']['optional'].nil?
-              validate_optional_keys yaml[key], required_keys[index][key]['subkeys']['optional']
+            if !keys[index][key]['subkeys']['optional'].nil?
+              validate_keys yaml[key], keys[index][key]['subkeys']['optional'], ancestors, 'optional'
             end
           else
             if
-              validate_accepted_types yaml[key], required_keys[index][key]['accepted_types'], key
+              validate_accepted_types yaml[key], keys[index][key]['accepted_types'], key
             end
           end
         else
-          self.violations += 1
-          YamlBot::Logging.error "Missing required key: #{key}"
-        end
-      end
-    end
-
-    def validate_optional_keys(yaml, optional_keys)
-      optional_keys.each_with_index do |key_map, index|
-        key = key_map.keys.first
-        if yaml.keys.include?(key)
-          if !optional_keys[index][key]['subkeys'].nil?
-            if !optional_keys[index][key]['subkeys']['required'].nil?
-              validate_required_keys yaml[key], optional_keys[index][key]['subkeys']['required']
-            end
-
-            if !optional_keys[index][key]['subkeys']['optional'].nil?
-              validate_optional_keys yaml[key], optional_keys[index][key]['subkeys']['optional']
-            end
+          ancestors = ancestors.join('.')
+          if key_type == 'required'
+            self.violations += 1
+            YamlBot::Logging.error "Missing required key: #{ancestors}"
           else
-            if
-              validate_accepted_types yaml[key], optional_keys[index][key]['accepted_types'], key
-            end
+            YamlBot::Logging.info "Not utilizing optional key: #{ancestors}"
           end
-        else
-          YamlBot::Logging.info "Not utilizing optional key: #{key}"
         end
       end
     end
