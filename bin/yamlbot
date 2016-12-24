@@ -6,6 +6,7 @@ require 'yaml'
 require 'optparse'
 require 'yaml_bot'
 require 'benchmark'
+require 'active_support/core_ext/hash/keys'
 
 banner = <<-eos
 I am YamlBot feed me YAML!
@@ -15,9 +16,11 @@ eos
 options = {}
 parser = OptionParser.new do |opts|
   opts.banner = banner
-  opts.banner += 'Usage: yamlbot -f yaml_file_to_validate [-r path_to_rules_file]'
+  opts.banner += 'Usage: yamlbot -f yaml_file_to_validate ' \
+                 '[-r path_to_rules_file]'
 
-  opts.on('-r', '--rule-file rules', 'The rules you will be evaluating your yaml against') do |rules|
+  opts.on('-r', '--rule-file rules',
+          'The rules you will be evaluating your yaml against') do |rules|
     options[:rules] = rules
   end
 
@@ -35,13 +38,13 @@ parser.parse!
 rules_file = ''
 yaml_file = ''
 if options[:rules].nil?
-  if !File.exist?('.yamlbot.yml')
+  unless File.exist?('.yamlbot.yml')
     puts 'Unable to locate .yamlbot.yml file...'
     puts 'Either place a .yamlbot.yml file in the current directory'
     puts 'or specify one with the -r option.'
     exit 1
   end
-  rules_file =  YAML.load(File.open('.yamlbot.yml'))
+  rules_file = YAML.load(File.open('.yamlbot.yml'))
 else
   begin
     rules_file = YAML.load(File.open(options[:rules]))

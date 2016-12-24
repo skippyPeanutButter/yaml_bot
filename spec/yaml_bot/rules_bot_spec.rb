@@ -9,16 +9,21 @@ describe YamlBot::RulesBot do
     end
 
     it 'prints a message when a rules file is validated' do
-      @rules_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-              '/../fixtures/valid_rules_file.yml'))
+      file = 'valid_rules_file.yml'
+      @rules_bot.rules = YAML.load(File.open(File.dirname(
+                                   File.realpath(__FILE__)) +
+                                   "/../fixtures/#{file}"))
       msg = 'Rules file validated.'
       expect { @rules_bot.validate_rules }.to output(/#{msg}/).to_stdout
     end
 
     it 'throws a ValidationError when a rules file is invalid' do
-      @rules_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-              '/../fixtures/rules_file_invalid_type.yml'))
-      expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError)
+      file = 'rules_file_invalid_type.yml'
+      @rules_bot.rules = YAML.load(File.open(File.dirname(
+                                   File.realpath(__FILE__)) +
+                                   "/../fixtures/#{file}"))
+      expect { @rules_bot.validate_rules
+              }.to raise_error(YamlBot::ValidationError)
     end
   end
 
@@ -28,23 +33,31 @@ describe YamlBot::RulesBot do
     end
 
     it 'prints a message when the required root key is missing' do
-      @rules_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-              '/../fixtures/rules_file_missing_required_root_key.yml'))
+      file = 'rules_file_missing_required_root_key.yml'
+      @rules_bot.rules = YAML.load(File.open(File.dirname(
+                                   File.realpath(__FILE__)) +
+                                   "/../fixtures/#{file}"))
       msg = 'No required keys specified.'
       expect { @rules_bot.validate_root_keys }.to output(/#{msg}/).to_stdout
     end
 
     it 'prints a message when the optional root key is missing' do
-      @rules_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-              '/../fixtures/rules_file_missing_optional_root_key.yml'))
+      file = 'rules_file_missing_optional_root_key.yml'
+      @rules_bot.rules = YAML.load(File.open(File.dirname(
+                                             File.realpath(__FILE__)) +
+                                             "/../fixtures/#{file}"))
       msg = 'No optional keys specified.'
       expect { @rules_bot.validate_root_keys }.to output(/#{msg}/).to_stdout
     end
 
-    it 'raises ValidationError if missing both required and optional root keys' do
-      @rules_bot.rules = YAML.load(File.open(File.dirname(File.realpath(__FILE__)) +
-              '/../fixtures/rules_file_missing_root_keys.yml'))
-      expect { @rules_bot.validate_root_keys }.to raise_error(YamlBot::ValidationError)
+    it 'raises ValidationError if missing both required and '\
+       'optional root keys' do
+      file = 'rules_file_missing_root_keys.yml'
+      @rules_bot.rules = YAML.load(File.open(File.dirname(
+                                             File.realpath(__FILE__)) +
+                                             "/../fixtures/#{file}"))
+      expect { @rules_bot.validate_root_keys
+              }.to raise_error(YamlBot::ValidationError)
     end
   end
 
@@ -55,10 +68,12 @@ describe YamlBot::RulesBot do
 
     it 'raises a ValidationError when it finds an invalid accepted type' do
       type = {'accepted_types'=>['Invalid_type']}
-      expect{ @rules_bot.validate_accepted_types(type) }.to raise_error(YamlBot::ValidationError)
+      expect{ @rules_bot.validate_accepted_types(type)
+            }.to raise_error(YamlBot::ValidationError)
     end
 
-    it 'raises no ValidationError when it does not find an invalid accepted type' do
+    it 'raises no ValidationError when it does not find an invalid '\
+       'accepted type' do
       type = {'accepted_types'=>['Fixnum', 'String']}
       expect{ @rules_bot.validate_accepted_types(type) }.not_to raise_error
     end
