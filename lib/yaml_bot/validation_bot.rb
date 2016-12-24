@@ -19,12 +19,12 @@ module YamlBot
         raise YamlBot::ValidationError.new(msg)
       end
 
-      if !rules['root_keys']['required'].nil?
-        validate_keys yaml_file, rules['root_keys']['required'], [], 'required'
+      if !rules[:root_keys][:required].nil?
+        validate_keys yaml_file, rules[:root_keys][:required], [], 'required'
       end
 
-      if !rules['root_keys']['optional'].nil?
-        validate_keys yaml_file, rules['root_keys']['optional'], [], 'optional'
+      if !rules[:root_keys][:optional].nil?
+        validate_keys yaml_file, rules[:root_keys][:optional], [], 'optional'
       end
 
       YamlBot::Logging.info 'Finished scanning...'
@@ -38,17 +38,17 @@ module YamlBot
         puts "Validating key #{key}"
         ancestors = parent_keys.dup << key
         if yaml.keys.include?(key)
-          if !keys[index][key]['subkeys'].nil?
-            if !keys[index][key]['subkeys']['required'].nil?
-              validate_keys yaml[key], keys[index][key]['subkeys']['required'], ancestors, 'required'
+          if !keys[index][key][:subkeys].nil?
+            if !keys[index][key][:subkeys][:required].nil?
+              validate_keys yaml[key], keys[index][key][:subkeys][:required], ancestors, 'required'
             end
 
-            if !keys[index][key]['subkeys']['optional'].nil?
-              validate_keys yaml[key], keys[index][key]['subkeys']['optional'], ancestors, 'optional'
+            if !keys[index][key][:subkeys][:optional].nil?
+              validate_keys yaml[key], keys[index][key][:subkeys][:optional], ancestors, 'optional'
             end
           else
             if
-              validate_accepted_types yaml[key], keys[index][key]['accepted_types'], key
+              validate_accepted_types yaml[key], keys[index][key][:accepted_types], key
             end
           end
         else

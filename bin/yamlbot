@@ -44,10 +44,10 @@ if options[:rules].nil?
     puts 'or specify one with the -r option.'
     exit 1
   end
-  rules_file = YAML.load(File.open('.yamlbot.yml'))
+  rules_file = YAML.load(File.open('.yamlbot.yml')).deep_symbolize_keys
 else
   begin
-    rules_file = YAML.load(File.open(options[:rules]))
+    rules_file = YAML.load(File.open(options[:rules])).deep_symbolize_keys
   rescue StandardError => e
     puts "Unable to locate rules file #{File.basename(options[:rules])}..."
     puts e.message
@@ -57,7 +57,7 @@ else
 end
 
 begin
-  yaml_file = YAML.load(File.open(options[:file]))
+  yaml_file = YAML.load(File.open(options[:file])).deep_symbolize_keys
 rescue StandardError => e
   puts "Unable to locate yaml file #{File.basename(options[:file])}..."
   puts e.message
