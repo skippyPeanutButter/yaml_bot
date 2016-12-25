@@ -30,7 +30,7 @@ Or install it yourself as:
 ### Usage
 
 Create or make use of a specification for what a particular yaml file should
-contain (see [yamlbot file specification](yamlbot_specification.md)).
+contain (see [yamlbot file specification][yamlbot-spec].
 
 ```bash
 Usage: yamlbot -f yaml_file_to_validate [-r path_to_rules_file]
@@ -60,3 +60,5 @@ to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 The gem is available as open source under the terms of the [MIT
 License](http://opensource.org/licenses/MIT).
+
+[yamlbot-spec]: https://github.com/skippyPeanutButter/yaml_bot/wiki/Rules-file-specification
