@@ -13,100 +13,84 @@ module YamlBot
     end
 
     def validate_rules
-      check_rules_are_loaded
+      fail_if_rules_are_not_loaded
       validate_root_keys
-      unless @missing_required_keys
-        @rules[:root_keys][:required].each do |key|
-          name = key.keys.first
-          unless key[name][:accepted_types].nil?
-            validate_accepted_types(key[name])
-          end
-
-          unless key[name][:subkeys].nil?
-            validate_keys(key[name][:subkeys])
-          end
-        end
-      end
-
-      unless @missing_optional_keys
-        @rules[:root_keys][:optional].each do |key|
-          name = key.keys.first
-          unless key[name][:accepted_types].nil?
-            validate_accepted_types(key[name])
-          end
-
-          unless key[name][:subkeys].nil?
-            validate_keys(key[name][:subkeys])
-          end
-        end
-      end
-
+      check_top_level_keys
       YamlBot::Logging.info 'Rules file validated.'
     end
 
+    private
+
+    def check_top_level_keys
+      [:required, :optional].each do |key_type|
+        missing = @missing_optional_keys
+        missing = @missing_required_keys if key_type == :required
+
+        next if missing
+        @rules[:root_keys][key_type].each do |key|
+          name = key.keys.first
+          validate_accepted_types(key[name]) unless
+                                             key[name][:accepted_types].nil?
+          validate_keys(key[name][:subkeys]) unless key[name][:subkeys].nil?
+        end
+      end
+    end
+
     def validate_root_keys
+      check_existance_of_required_keys
+      check_existance_of_optional_keys
+      fail_validation_if_missing_required_and_optional_keys
+    end
+
+    def check_existance_of_required_keys
       if !@rules[:root_keys].instance_of?(Hash) ||
-          @rules[:root_keys][:required].nil?
+         @rules[:root_keys][:required].nil?
         @missing_required_keys = true
         YamlBot::Logging.info 'No required keys specified.'
       end
+    end
+
+    def check_existance_of_optional_keys
       if !@rules[:root_keys].instance_of?(Hash) ||
-          @rules[:root_keys][:optional].nil?
+         @rules[:root_keys][:optional].nil?
         @missing_optional_keys = true
         YamlBot::Logging.info 'No optional keys specified.'
       end
-      if @missing_required_keys && @missing_optional_keys
-        msg = "Missing both required and optional root keys.\n"
-        msg += "Rules file must include at least one of those keys.\n"
-        raise YamlBot::ValidationError.new(msg)
-      end
+    end
+
+    def fail_validation_if_missing_required_and_optional_keys
+      return unless @missing_required_keys && @missing_optional_keys
+      msg = "Missing both required and optional root keys.\n"
+      msg += "Rules file must include at least one of those keys.\n"
+      raise YamlBot::ValidationError, msg
     end
 
     def validate_keys(rules)
-      unless rules[:required].nil?
-        rules[:required].each do |key|
-          unless key[:accepted_types].nil?
-            validate_accepted_types(key)
-          end
-
-          unless key[:subkeys].nil?
-            validate_keys(key[:subkeys])
-          end
-        end
-      end
-
-      unless rules[:optional].nil?
-        rules[:optional].each do |key|
-          unless key[:accepted_types].nil?
-            validate_accepted_types(key)
-          end
-
-          unless key[:subkeys].nil?
-            validate_keys(key[:subkeys])
-          end
+      [:required, :optional].each do |key_type|
+        next if rules[key_type].nil?
+        rules[key_type].each do |key|
+          validate_accepted_types(key) unless key[:accepted_types].nil?
+          validate_keys(key[:subkeys]) unless key[:subkeys].nil?
         end
       end
     end
 
-    def check_rules_are_loaded
-      if @rules.nil? && @rules.instance_of?(Hash)
-        msg = 'Cannot validate, rules file not loaded!'
-        raise YamlBot::ValidationError.new(msg)
-      end
+    def fail_if_rules_are_not_loaded
+      return unless @rules.nil? && @rules.instance_of?(Hash)
+      msg = 'Cannot validate, rules file not loaded!'
+      raise YamlBot::ValidationError, msg
     end
 
     def validate_accepted_types(key_hash)
-      allowed_values = YAML.load(File.open(
-                                 File.dirname(
-                                 File.realpath(__FILE__)) +
-                                 '/resources/valid_accepted_types.yml'))
+      file_name = File.dirname(File.realpath(__FILE__)) +
+                  '/resources/valid_accepted_types.yml'
+      allowed_values = YAML.load(File.open(file_name))
 
       key_hash[:accepted_types].each do |type|
-        unless allowed_values.include?(type)
-          msg = "Invalid value for key: #{type}\n"
-          msg += "Valid key values are #{allowed_values}"
-          raise YamlBot::ValidationError.new(msg)
-        end
+        next if allowed_values.include?(type)
+        msg = "Invalid value for key: #{type}\n"
+        msg += "Valid key values are #{allowed_values}"
+        raise YamlBot::ValidationError, msg
       end
     end
   end

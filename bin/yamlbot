@@ -74,7 +74,9 @@ yaml_bot.rules = rules_file
 yaml_bot.yaml_file = yaml_file
 
 time = Benchmark.realtime do
+  YamlBot::Logging.info 'Beginning scan...'
   yaml_bot.scan
+  YamlBot::Logging.info 'Finished scanning...'
 end
 
 puts "Scanning took #{time} seconds"

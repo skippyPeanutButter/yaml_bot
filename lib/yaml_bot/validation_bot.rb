@@ -12,22 +12,11 @@ module YamlBot
     end
 
     def scan
-      YamlBot::Logging.info 'Beginning scan...'
-
-      if rules.nil? || yaml_file.nil?
-        msg = "Rules file, or Yaml file is not set\n"
-        raise YamlBot::ValidationError.new(msg)
+      validate_existance_of_rules_and_yaml_files
+      [:required, :optional].each do |key_type|
+        next if rules[:root_keys][key_type].nil?
+        validate_keys yaml_file, rules[:root_keys][key_type], [], key_type
       end
-
-      if !rules[:root_keys][:required].nil?
-        validate_keys yaml_file, rules[:root_keys][:required], [], 'required'
-      end
-
-      if !rules[:root_keys][:optional].nil?
-        validate_keys yaml_file, rules[:root_keys][:optional], [], 'optional'
-      end
-
-      YamlBot::Logging.info 'Finished scanning...'
     end
 
     private
@@ -35,41 +24,58 @@ module YamlBot
     def validate_keys(yaml, keys, parent_keys, key_type)
       keys.each_with_index do |key_map, index|
         key = key_map.keys.first
-        puts "Validating key #{key}"
         ancestors = parent_keys.dup << key
         if yaml.keys.include?(key)
-          if !keys[index][key][:subkeys].nil?
-            if !keys[index][key][:subkeys][:required].nil?
-              validate_keys yaml[key], keys[index][key][:subkeys][:required], ancestors, 'required'
-            end
-
-            if !keys[index][key][:subkeys][:optional].nil?
-              validate_keys yaml[key], keys[index][key][:subkeys][:optional], ancestors, 'optional'
-            end
-          else
-            if
-              validate_accepted_types yaml[key], keys[index][key][:accepted_types], key
-            end
-          end
+          check_if_key_is_required_or_optional(yaml,
+                                               key,
+                                               keys,
+                                               index,
+                                               ancestors)
         else
           ancestors = ancestors.join('.')
-          if key_type == 'required'
-            self.violations += 1
-            YamlBot::Logging.error "Missing required key: #{ancestors}"
-          else
-            YamlBot::Logging.info "Not utilizing optional key: #{ancestors}"
-          end
+          log_missing_key(key_type, ancestors)
         end
       end
     end
 
-    def validate_accepted_types(value, accepted_types, key)
-      if !accepted_types.include?(value.class.to_s)
-        self.violations += 1
-        msg = "Value: #{value} of class #{value.class} is not a valid type for key: #{key}\n"
-        msg += "Valid types for key #{key} include: #{accepted_types}\n"
-        YamlBot::Logging.error msg
+    def check_if_key_is_required_or_optional(yaml, key, keys, index, ancestors)
+      if !keys[index][key][:subkeys].nil?
+        [:required, :optional].each do |key_type|
+          next if keys[index][key][:subkeys][key_type].nil?
+          validate_keys(yaml[key],
+                        keys[index][key][:subkeys][key_type],
+                        ancestors,
+                        key_type)
+        end
+      else
+        validate_accepted_types(yaml[key],
+                                keys[index][key][:accepted_types],
+                                key)
       end
+    end
+
+    def validate_existance_of_rules_and_yaml_files
+      return unless rules.nil? || yaml_file.nil?
+      msg = "Rules file, or Yaml file is not set\n"
+      raise YamlBot::ValidationError, msg
+    end
+
+    def log_missing_key(key_type, ancestors)
+      if key_type == :required
+        self.violations += 1
+        YamlBot::Logging.error "Missing required key: #{ancestors}"
+      else
+        YamlBot::Logging.info "Not utilizing optional key: #{ancestors}"
+      end
+    end
+
+    def validate_accepted_types(value, accepted_types, key)
+      return if accepted_types.include?(value.class.to_s)
+      self.violations += 1
+      msg = "Value: #{value} of class #{value.class} is not a valid type "\
+            "for key: #{key}\n"
+      msg += "Valid types for key #{key} include: #{accepted_types}\n"
+      YamlBot::Logging.error msg
     end
   end
 end
