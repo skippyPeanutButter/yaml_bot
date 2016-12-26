@@ -26,11 +26,7 @@ module YamlBot
         key = key_map.keys.first
         ancestors = parent_keys.dup << key
         if yaml.keys.include?(key)
-          check_if_key_is_required_or_optional(yaml,
-                                               key,
-                                               keys,
-                                               index,
-                                               ancestors)
+          check_if_key_contains_subkeys(yaml, key, keys, index, ancestors)
         else
           ancestors = ancestors.join('.')
           log_missing_key(key_type, ancestors)
@@ -38,19 +34,23 @@ module YamlBot
       end
     end
 
-    def check_if_key_is_required_or_optional(yaml, key, keys, index, ancestors)
+    def check_if_key_contains_subkeys(yaml, key, keys, index, ancestors)
       if !keys[index][key][:subkeys].nil?
-        [:required, :optional].each do |key_type|
-          next if keys[index][key][:subkeys][key_type].nil?
-          validate_keys(yaml[key],
-                        keys[index][key][:subkeys][key_type],
-                        ancestors,
-                        key_type)
-        end
+        validate_subkeys(yaml, key, keys, index, ancestors)
       else
         validate_accepted_types(yaml[key],
                                 keys[index][key][:accepted_types],
                                 key)
+      end
+    end
+
+    def validate_subkeys(yaml, key, keys, index, ancestors)
+      [:required, :optional].each do |key_type|
+        next if keys[index][key][:subkeys][key_type].nil?
+        validate_keys(yaml[key],
+                      keys[index][key][:subkeys][key_type],
+                      ancestors,
+                      key_type)
       end
     end
 

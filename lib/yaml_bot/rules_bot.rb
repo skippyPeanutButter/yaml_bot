@@ -23,16 +23,25 @@ module YamlBot
 
     def check_top_level_keys
       [:required, :optional].each do |key_type|
-        missing = @missing_optional_keys
-        missing = @missing_required_keys if key_type == :required
-
-        next if missing
+        next if determine_key_type(key_type)
         @rules[:root_keys][key_type].each do |key|
           name = key.keys.first
-          validate_accepted_types(key[name]) unless
-                                             key[name][:accepted_types].nil?
-          validate_keys(key[name][:subkeys]) unless key[name][:subkeys].nil?
+          check_subkeys_or_accepted_types(key, name)
         end
+      end
+    end
+
+    def check_subkeys_or_accepted_types(key, name)
+      validate_accepted_types(key[name]) unless
+                                         key[name][:accepted_types].nil?
+      validate_keys(key[name][:subkeys]) unless key[name][:subkeys].nil?
+    end
+
+    def determine_key_type(key_type)
+      if key_type == :required
+        @missing_required_keys
+      else
+        @missing_optional_keys
       end
     end
 
