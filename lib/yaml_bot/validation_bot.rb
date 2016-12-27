@@ -26,7 +26,7 @@ module YamlBot
         key = key_map.keys.first
         ancestors = parent_keys.dup << key
         if yaml.keys.include?(key)
-          check_if_key_contains_subkeys(yaml, key, keys, index, ancestors)
+          validate_subkeys_or_accepted_types(yaml, key, keys, index, ancestors)
         else
           ancestors = ancestors.join('.')
           log_missing_key(key_type, ancestors)
@@ -34,7 +34,7 @@ module YamlBot
       end
     end
 
-    def check_if_key_contains_subkeys(yaml, key, keys, index, ancestors)
+    def validate_subkeys_or_accepted_types(yaml, key, keys, index, ancestors)
       if !keys[index][key][:subkeys].nil?
         validate_subkeys(yaml, key, keys, index, ancestors)
       else

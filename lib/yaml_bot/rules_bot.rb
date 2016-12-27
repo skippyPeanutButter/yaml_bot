@@ -26,12 +26,12 @@ module YamlBot
         next if determine_key_type(key_type)
         @rules[:root_keys][key_type].each do |key|
           name = key.keys.first
-          check_subkeys_or_accepted_types(key[name])
+          check_subkeys_and_accepted_types(key[name])
         end
       end
     end
 
-    def check_subkeys_or_accepted_types(key)
+    def check_subkeys_and_accepted_types(key)
       validate_accepted_types(key) unless key[:accepted_types].nil?
       validate_keys(key[:subkeys]) unless key[:subkeys].nil?
     end
@@ -77,7 +77,7 @@ module YamlBot
       [:required, :optional].each do |key_type|
         next if rules[key_type].nil?
         rules[key_type].each do |key|
-          check_subkeys_or_accepted_types(key)
+          check_subkeys_and_accepted_types(key)
         end
       end
     end
