@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/skippyPeanutButter/yaml_bot.svg?branch=master)](https://travis-ci.org/skippyPeanutButter/yaml_bot)
 [![Code Climate](https://codeclimate.com/github/skippyPeanutButter/yaml_bot/badges/gpa.svg)](https://codeclimate.com/github/skippyPeanutButter/yaml_bot)
+[![Test Coverage](https://codeclimate.com/github/skippyPeanutButter/yaml_bot/badges/coverage.svg)](https://codeclimate.com/github/skippyPeanutButter/yaml_bot/coverage)
 
 # YamlBot
 
