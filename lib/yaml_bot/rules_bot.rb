@@ -45,22 +45,24 @@ module YamlBot
     end
 
     def validate_root_keys
-      check_existance_of_required_keys
-      check_existance_of_optional_keys
+      check_existance_of_required_and_optional_keys
       fail_validation_if_missing_required_and_optional_keys
     end
 
-    def check_existance_of_required_keys
-      if !@rules[:root_keys].instance_of?(Hash) ||
-         @rules[:root_keys][:required].nil?
-        @missing_required_keys = true
-        YamlBot::Logging.info 'No required keys specified.'
+    def check_existance_of_required_and_optional_keys
+      [:required, :optional].each do |key_type|
+        if !@rules[:root_keys].instance_of?(Hash) ||
+           @rules[:root_keys][key_type].nil?
+          log_missing_key_type(key_type)
+        end
       end
     end
 
-    def check_existance_of_optional_keys
-      if !@rules[:root_keys].instance_of?(Hash) ||
-         @rules[:root_keys][:optional].nil?
+    def log_missing_key_type(key_type)
+      if key_type == :required
+        @missing_required_keys = true
+        YamlBot::Logging.info 'No required keys specified.'
+      else
         @missing_optional_keys = true
         YamlBot::Logging.info 'No optional keys specified.'
       end
