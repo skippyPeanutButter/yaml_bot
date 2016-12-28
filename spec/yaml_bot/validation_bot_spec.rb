@@ -104,6 +104,25 @@ describe YamlBot::ValidationBot do
 
         expect(@yaml_bot.violations).to eq(0)
       end
+
+      it 'logs a message for each successfully validated key' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/valid_rules_file.yml'
+        yaml = { key1: { subkey1: 'value1', subkey2: 42 }, key2: 'value2' }
+        msgs = [
+          'Key: key1.subkey1 successfully utilized with a value of value1',
+          'Key: key1.subkey2 successfully utilized with a value of 42',
+          'Key: key2 successfully utilized with a value of value2'
+        ]
+        @yaml_bot.rules = YAML.load(
+          File.open(rules_file_name)
+        ).deep_symbolize_keys
+        @yaml_bot.yaml_file = yaml
+
+        msgs.each do |msg|
+          expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
+        end
+      end
     end
 
     context 'rules files containing only optional keys' do
