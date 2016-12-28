@@ -79,5 +79,10 @@ time = Benchmark.realtime do
   YamlBot::Logging.info 'Finished scanning...'
 end
 
+puts '----------------------------------------------'
 puts "Scanning took #{time} seconds"
-puts "#{yaml_bot.violations} violations"
+if yaml_bot.violations > 0
+  YamlBot::Logging.error "#{yaml_bot.violations} violations"
+else
+  YamlBot::Logging.info "#{yaml_bot.violations} violations"
+end
