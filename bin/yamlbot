@@ -73,16 +73,20 @@ yaml_bot = YamlBot::ValidationBot.new
 yaml_bot.rules = rules_file
 yaml_bot.yaml_file = yaml_file
 
-time = Benchmark.realtime do
-  YamlBot::Logging.info 'Beginning scan...'
-  yaml_bot.scan
-  YamlBot::Logging.info 'Finished scanning...'
-end
+begin
+  time = Benchmark.realtime do
+    YamlBot::LoggingBot.info 'Beginning scan...'
+    yaml_bot.scan
+    YamlBot::LoggingBot.info 'Finished scanning...'
+  end
 
-puts '----------------------------------------------'
-puts "Scanning took #{time} seconds"
-if yaml_bot.violations > 0
-  YamlBot::Logging.error "#{yaml_bot.violations} violations"
-else
-  YamlBot::Logging.info "#{yaml_bot.violations} violations"
+  puts '----------------------------------------------'
+  puts "Scanning took #{time} seconds"
+  if yaml_bot.violations > 0
+    YamlBot::LoggingBot.error "#{yaml_bot.violations} violations"
+  else
+    YamlBot::LoggingBot.info "#{yaml_bot.violations} violations"
+  end
+ensure
+  YamlBot::LoggingBot.close_log
 end
