@@ -40,6 +40,7 @@ module YamlBot
       else
         validate_accepted_types(yaml[key],
                                 keys[index][key][:accepted_types],
+                                ancestors,
                                 key)
       end
     end
@@ -69,11 +70,24 @@ module YamlBot
       end
     end
 
-    def validate_accepted_types(value, accepted_types, key)
-      return if accepted_types.include?(value.class.to_s)
+    def validate_accepted_types(value, accepted_types, ancestors, key)
+      if accepted_types.include?(value.class.to_s)
+        log_successful_key_validation(value, ancestors)
+      else
+        log_failed_key_validation(value, accepted_types, ancestors, key)
+      end
+    end
+
+    def log_successful_key_validation(value, ancestors)
+      msg = "Key: #{ancestors.join('.')} successfully utilized with a value "\
+            "of #{value}"
+      YamlBot::Logging.info msg
+    end
+
+    def log_failed_key_validation(value, accepted_types, ancestors, key)
       self.violations += 1
       msg = "Value: #{value} of class #{value.class} is not a valid type "\
-            "for key: #{key}\n"
+            "for key: #{ancestors.join('.')}\n"
       msg += "Valid types for key #{key} include: #{accepted_types}\n"
       YamlBot::Logging.error msg
     end
