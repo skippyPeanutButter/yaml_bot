@@ -1,28 +1,47 @@
 module YamlBot
   class LoggingBot
+    class LoggingError < RuntimeError
+      def initialize(msg)
+        super(msg)
+      end
+    end
+
     ESCAPES = { green: "\033[32m",
                 yellow: "\033[33m",
                 red: "\033[31m",
                 reset: "\033[0m" }.freeze
+    LOGLEVEL = { info: [:info, :warn, :error],
+                 warn: [:warn, :error],
+                 error: [:error] }.freeze
 
-    @@log_file = File.new('yaml_bot.log', 'w')
+    attr_accessor :log_file, :log_level
 
-    def self.info(message)
-      @@log_file.write(message + "\n")
+    def initialize(log_file = 'yaml_bot.log', log_level = :info)
+      @log_file = File.new(log_file, 'w')
+      @log_level = log_level.to_sym unless valid_log_level(log_level)
+    end
+
+    def info(message)
+      log(message, :info)
       emit(message: message, color: :green)
     end
 
-    def self.warn(message)
-      @@log_file.write(message + "\n")
+    def warn(message)
+      log(message, :warn)
       emit(message: message, color: :yellow)
     end
 
-    def self.error(message)
-      @@log_file.write(message + "\n")
+    def error(message)
+      log(message, :error)
       emit(message: message, color: :red)
     end
 
-    def self.emit(opts = {})
+    def log(message, level)
+      message = level.to_s.upcase + ': ' + message + "\n"
+      @log_file.write(message) if LOGLEVEL[log_level].include? level
+    end
+
+    def emit(opts = {})
       color   = opts[:color]
       message = opts[:message]
       print ESCAPES[color]
@@ -31,8 +50,17 @@ module YamlBot
       print "\n"
     end
 
-    def self.close_log
-      @@log_file.close
+    def close_log
+      @log_file.close
+    end
+
+    private
+
+    def valid_log_level(level)
+      return if LOGLEVEL[log_level].include?(level)
+      msg = 'Invalid loglevel specified.'
+      msg += 'Loglevel must info, warn, or error.'
+      raise LoggingError, msg
     end
   end
 end
