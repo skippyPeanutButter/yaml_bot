@@ -65,7 +65,8 @@ rescue StandardError => e
   exit 1
 end
 
-logger_bot = YamlBot::LoggingBot.new
+log_file = File.new('yaml_bot.log', 'w')
+logger_bot = YamlBot::LoggingBot.new(log_file)
 
 rules_bot = YamlBot::RulesBot.new
 rules_bot.rules = rules_file

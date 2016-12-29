@@ -16,9 +16,9 @@ module YamlBot
 
     attr_accessor :log_file, :log_level
 
-    def initialize(log_file = 'yaml_bot.log', log_level = :info)
-      @log_file = File.new(log_file, 'w')
-      @log_level = log_level.to_sym unless valid_log_level(log_level)
+    def initialize(log_file, level = :info)
+      @log_file = log_file
+      @log_level = level.to_sym unless valid_log_level(level)
     end
 
     def info(message)
@@ -38,8 +38,14 @@ module YamlBot
 
     def log(message, level)
       message = level.to_s.upcase + ': ' + message + "\n"
-      @log_file.write(message) if LOGLEVEL[log_level].include? level
+      log_file.write(message) if LOGLEVEL[log_level].include?(level)
     end
+
+    def close_log
+      log_file.close
+    end
+
+    private
 
     def emit(opts = {})
       color   = opts[:color]
@@ -50,14 +56,8 @@ module YamlBot
       print "\n"
     end
 
-    def close_log
-      @log_file.close
-    end
-
-    private
-
     def valid_log_level(level)
-      return if LOGLEVEL[log_level].include?(level)
+      return if LOGLEVEL[:info].include?(level.to_sym)
       msg = 'Invalid loglevel specified.'
       msg += 'Loglevel must info, warn, or error.'
       raise LoggingError, msg
