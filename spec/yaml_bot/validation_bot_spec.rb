@@ -1,9 +1,11 @@
 require 'spec_helper'
 require 'active_support/core_ext/hash/keys'
+require 'stringio'
 
 describe YamlBot::ValidationBot do
   before :each do
     @yaml_bot = YamlBot::ValidationBot.new
+    @yaml_bot.logger = YamlBot::LoggingBot.new(StringIO.new)
   end
 
   it 'is initialized with 0 violations' do
@@ -17,6 +19,7 @@ describe YamlBot::ValidationBot do
                     '/../fixtures/valid_rules_file.yml'
         rules = YAML.load(File.open(file_name)).deep_symbolize_keys
         @yaml_bot.rules = rules
+
         expect { @yaml_bot.scan }.to raise_error(YamlBot::ValidationError)
       end
 
@@ -25,13 +28,13 @@ describe YamlBot::ValidationBot do
                     '/../fixtures/valid_rules_file.yml'
         yaml = YAML.load(File.open(file_name)).deep_symbolize_keys
         @yaml_bot.yaml_file = yaml
+
         expect { @yaml_bot.scan }.to raise_error(YamlBot::ValidationError)
       end
     end
 
     context 'yaml files violating yamlbot rules file specification' do
       before :each do
-        @yaml_bot = YamlBot::ValidationBot.new
         file_name = File.dirname(File.realpath(__FILE__)) +
                     '/../fixtures/valid_rules_file.yml'
         rules = YAML.load(File.open(file_name)).deep_symbolize_keys

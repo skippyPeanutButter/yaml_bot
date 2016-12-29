@@ -65,24 +65,34 @@ rescue StandardError => e
   exit 1
 end
 
+log_file = File.new('yaml_bot.log', 'w')
+logger_bot = YamlBot::LoggingBot.new(log_file)
+
 rules_bot = YamlBot::RulesBot.new
 rules_bot.rules = rules_file
+rules_bot.logger = logger_bot
 rules_bot.validate_rules
 
 yaml_bot = YamlBot::ValidationBot.new
 yaml_bot.rules = rules_file
 yaml_bot.yaml_file = yaml_file
+yaml_bot.logger = logger_bot
 
-time = Benchmark.realtime do
-  YamlBot::Logging.info 'Beginning scan...'
-  yaml_bot.scan
-  YamlBot::Logging.info 'Finished scanning...'
-end
+begin
+  time = Benchmark.realtime do
+    logger_bot.info 'Beginning scan...'
+    yaml_bot.scan
+    logger_bot.info 'Finished scanning...'
+  end
 
-puts '----------------------------------------------'
-puts "Scanning took #{time} seconds"
-if yaml_bot.violations > 0
-  YamlBot::Logging.error "#{yaml_bot.violations} violations"
-else
-  YamlBot::Logging.info "#{yaml_bot.violations} violations"
+  puts '----------------------------------------------'
+  puts "Scanning took #{time} seconds"
+  if yaml_bot.violations > 0
+    logger_bot.error "#{yaml_bot.violations} violations"
+  else
+    logger_bot.info "#{yaml_bot.violations} violations"
+  end
+  puts "Results logged to #{File.absolute_path(logger_bot.log_file.path)}"
+ensure
+  logger_bot.close_log
 end

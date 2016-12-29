@@ -1,11 +1,11 @@
 require 'yaml'
-require 'yaml_bot/logging'
+require 'yaml_bot/logging_bot'
 require 'yaml_bot/rules_bot'
 require 'yaml_bot/validation_error'
 
 module YamlBot
   class ValidationBot
-    attr_accessor :rules, :yaml_file, :violations
+    attr_accessor :rules, :yaml_file, :violations, :logger
 
     def initialize
       self.violations = 0
@@ -64,9 +64,9 @@ module YamlBot
     def log_missing_key(key_type, ancestors)
       if key_type == :required
         self.violations += 1
-        YamlBot::Logging.error "Missing required key: #{ancestors}"
+        logger.error "Missing required key: #{ancestors}"
       else
-        YamlBot::Logging.info "Not utilizing optional key: #{ancestors}"
+        logger.warn "Not utilizing optional key: #{ancestors}"
       end
     end
 
@@ -81,7 +81,7 @@ module YamlBot
     def log_successful_key_validation(value, ancestors)
       msg = "Key: #{ancestors.join('.')} successfully utilized with a value "\
             "of #{value}"
-      YamlBot::Logging.info msg
+      logger.info msg
     end
 
     def log_failed_key_validation(value, accepted_types, ancestors, key)
@@ -89,7 +89,7 @@ module YamlBot
       msg = "Value: #{value} of class #{value.class} is not a valid type "\
             "for key: #{ancestors.join('.')}\n"
       msg += "Valid types for key #{key} include: #{accepted_types}\n"
-      YamlBot::Logging.error msg
+      logger.error msg
     end
   end
 end

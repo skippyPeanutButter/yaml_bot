@@ -1,10 +1,10 @@
 require 'yaml'
-require 'yaml_bot/logging'
+require 'yaml_bot/logging_bot'
 require 'yaml_bot/validation_error'
 
 module YamlBot
   class RulesBot
-    attr_accessor :rules
+    attr_accessor :rules, :logger
 
     def initialize
       @rules = nil
@@ -16,7 +16,7 @@ module YamlBot
       fail_if_rules_are_not_loaded
       validate_root_keys
       check_top_level_keys
-      YamlBot::Logging.info 'Rules file validated.'
+      logger.info 'Rules file validated.'
     end
 
     private
@@ -61,10 +61,10 @@ module YamlBot
     def log_missing_key_type(key_type)
       if key_type == :required
         @missing_required_keys = true
-        YamlBot::Logging.info 'No required keys specified.'
+        logger.info 'No required keys specified.'
       else
         @missing_optional_keys = true
-        YamlBot::Logging.info 'No optional keys specified.'
+        logger.info 'No optional keys specified.'
       end
     end
 
