@@ -28,6 +28,8 @@ module YamlBot
       @logger_bot.close_log
     end
 
+    private
+
     def load_rules_file
       if @options[:rules].nil?
         load_default_rules
@@ -71,8 +73,6 @@ module YamlBot
       end
       puts "Results logged to #{File.absolute_path(@logger_bot.log_file.path)}"
     end
-
-    private
 
     def load_default_rules
       rules_file = YAML.load(File.open('.yamlbot.yml')).deep_symbolize_keys
