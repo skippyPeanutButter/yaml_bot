@@ -17,6 +17,7 @@ module YamlBot
     end
 
     def run
+      check_cli_options
       load_rules_file
       load_yaml_file
       load_logger
@@ -42,7 +43,7 @@ module YamlBot
       yaml_file = YAML.load(File.open(@options[:file])).deep_symbolize_keys
       @validation_bot.yaml_file = yaml_file
     rescue StandardError => e
-      puts "Unable to locate yaml file #{File.basename(@options[:file])}..."
+      puts "Unable to locate yaml file #{@options[:file]}..."
       puts e.message
       puts e.backtrace.inspect
       exit 1
@@ -81,7 +82,7 @@ module YamlBot
     rescue StandardError
       $stderr.puts 'Unable to locate .yamlbot.yml file...'
       $stderr.puts 'Create a .yamlbot.yml file in the current directory'
-      $stderr.puts 'or specify one with the -r option.'
+      $stderr.puts 'or specify a rules file with the -r option.'
       exit 1
     end
 
@@ -90,8 +91,7 @@ module YamlBot
       @rules_bot.rules = rules_file
       @validation_bot.rules = rules_file
     rescue StandardError => e
-      $stderr.puts 'Unable to locate rules file '\
-                   "#{File.basename(options[:rules])}..."
+      $stderr.puts "Unable to locate rules file #{options[:rules]}..."
       $stderr.puts e.message
       $stderr.puts e.backtrace.inspect
       exit 1
@@ -105,6 +105,23 @@ module YamlBot
       else
         "#{n} #{singular}s"
       end
+    end
+
+    def check_cli_options
+      return unless @options.empty?
+      print_help
+      exit 1
+    end
+
+    def print_help
+      msg = [
+        'Usage: yamlbot -f yaml_file_to_validate [-r path_to_rules_file]',
+        "\t-r, --rule-file rules\t\tThe rules you will be evaluating your "\
+        'yaml against',
+        "\t-f, --file file\t\t\tThe file to validate against",
+        "\t-h, --help\t\t\thelp"
+      ].join("\n")
+      puts msg
     end
   end
 end
