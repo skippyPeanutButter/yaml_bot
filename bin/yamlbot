@@ -2,11 +2,9 @@
 
 $LOAD_PATH.unshift(File.dirname(File.realpath(__FILE__)) + '/../lib')
 
-require 'yaml'
 require 'optparse'
 require 'yaml_bot'
 require 'benchmark'
-require 'active_support/core_ext/hash/keys'
 
 banner = <<-eos
 I am YamlBot feed me YAML!
@@ -35,64 +33,14 @@ parser = OptionParser.new do |opts|
 end
 parser.parse!
 
-rules_file = ''
-yaml_file = ''
-if options[:rules].nil?
-  unless File.exist?('.yamlbot.yml')
-    puts 'Unable to locate .yamlbot.yml file...'
-    puts 'Either place a .yamlbot.yml file in the current directory'
-    puts 'or specify one with the -r option.'
-    exit 1
-  end
-  rules_file = YAML.load(File.open('.yamlbot.yml')).deep_symbolize_keys
-else
-  begin
-    rules_file = YAML.load(File.open(options[:rules])).deep_symbolize_keys
-  rescue StandardError => e
-    puts "Unable to locate rules file #{File.basename(options[:rules])}..."
-    puts e.message
-    puts e.backtrace.inspect
-    exit 1
-  end
+cli_bot = YamlBot::CLIBot.new(options)
+result = 0
+
+time = Benchmark.realtime do
+  result = cli_bot.run
 end
 
-begin
-  yaml_file = YAML.load(File.open(options[:file])).deep_symbolize_keys
-rescue StandardError => e
-  puts "Unable to locate yaml file #{File.basename(options[:file])}..."
-  puts e.message
-  puts e.backtrace.inspect
-  exit 1
-end
+puts '----------------------------------------------'
+puts "Scanning took #{time} seconds"
 
-log_file = File.new('yaml_bot.log', 'w')
-logger_bot = YamlBot::LoggingBot.new(log_file)
-
-rules_bot = YamlBot::RulesBot.new
-rules_bot.rules = rules_file
-rules_bot.logger = logger_bot
-rules_bot.validate_rules
-
-yaml_bot = YamlBot::ValidationBot.new
-yaml_bot.rules = rules_file
-yaml_bot.yaml_file = yaml_file
-yaml_bot.logger = logger_bot
-
-begin
-  time = Benchmark.realtime do
-    logger_bot.info 'Beginning scan...'
-    yaml_bot.scan
-    logger_bot.info 'Finished scanning...'
-  end
-
-  puts '----------------------------------------------'
-  puts "Scanning took #{time} seconds"
-  if yaml_bot.violations > 0
-    logger_bot.error "#{yaml_bot.violations} violations"
-  else
-    logger_bot.info "#{yaml_bot.violations} violations"
-  end
-  puts "Results logged to #{File.absolute_path(logger_bot.log_file.path)}"
-ensure
-  logger_bot.close_log
-end
+result
