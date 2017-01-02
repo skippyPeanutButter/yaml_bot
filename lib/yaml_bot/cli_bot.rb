@@ -43,9 +43,9 @@ module YamlBot
       yaml_file = YAML.load(File.open(@options[:file])).deep_symbolize_keys
       @validation_bot.yaml_file = yaml_file
     rescue StandardError => e
-      puts "Unable to locate yaml file #{@options[:file]}..."
-      puts e.message
-      puts e.backtrace.inspect
+      $stderr.puts "Unable to locate yaml file #{@options[:file]}..."
+      $stderr.puts e.message
+      $stderr.puts e.backtrace
       exit 1
     end
 
@@ -93,7 +93,7 @@ module YamlBot
     rescue StandardError => e
       $stderr.puts "Unable to locate rules file #{options[:rules]}..."
       $stderr.puts e.message
-      $stderr.puts e.backtrace.inspect
+      $stderr.puts e.backtrace
       exit 1
     end
 

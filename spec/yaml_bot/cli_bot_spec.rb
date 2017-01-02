@@ -12,7 +12,6 @@ describe YamlBot::CLIBot do
       file: yaml
     }
     @cli_bot = YamlBot::CLIBot.new(@opts)
-    @cli_bot.logger_bot.log_file = StringIO.new
   end
 
   it 'initializes a logger, a RulesBot object, and a ValidationBot object' do
@@ -26,23 +25,14 @@ describe YamlBot::CLIBot do
       before :each do
         @opts = {}
         @cli_bot = YamlBot::CLIBot.new(@opts)
-        @cli_bot.logger_bot.log_file = StringIO.new
       end
 
-      it 'prints help documentation' do
-        msg = [
-          'Usage: yamlbot -f yaml_file_to_validate [-r path_to_rules_file]',
-          "\t-r, --rule-file rules\t\tThe rules you will be evaluating your "\
-          'yaml against',
-          "\t-f, --file file\t\t\tThe file to validate against",
-          "\t-h, --help\t\t\thelp"
-        ].join("\n")
-
-        expect { @cli_bot.run }.to output(/#{msg}/).to_stdout
-      end
-
-      it 'returns a non-zero exit code' do
-        expect(@cli_bot.run).to eq(1)
+      it 'exits with a non-zero exit code' do
+        begin
+          @cli_bot.run
+        rescue SystemExit => e
+          expect(e.status).to eq(1)
+        end
       end
     end
 
@@ -57,11 +47,14 @@ describe YamlBot::CLIBot do
           file: yaml
         }
         @cli_bot = YamlBot::CLIBot.new(@opts)
-        @cli_bot.logger_bot.log_file = StringIO.new
       end
 
-      it 'returns a non-zero exit code' do
-        expect(@cli_bot.run).to eq(1)
+      it 'exits with a non-zero exit code' do
+        begin
+          @cli_bot.run
+        rescue SystemExit => e
+          expect(e.status).to eq(1)
+        end
       end
     end
 
@@ -76,17 +69,24 @@ describe YamlBot::CLIBot do
           file: yaml
         }
         @cli_bot = YamlBot::CLIBot.new(@opts)
-        @cli_bot.logger_bot.log_file = StringIO.new
       end
 
-      it 'returns a non-zero exit code' do
-        expect(@cli_bot.run).to eq(1)
+      it 'exits with a non-zero exit code' do
+        begin
+          @cli_bot.run
+        rescue SystemExit => e
+          expect(e.status).to eq(1)
+        end
       end
     end
 
     context 'Successful validation of a yaml file' do
       it 'returns a zero exit code' do
-        expect(@cli_bot.run).to eq(0)
+        begin
+          @cli_bot.run
+        rescue SystemExit => e
+          expect(e.status).to eq(1)
+        end
       end
 
       it 'closes the log file after a successful run' do
