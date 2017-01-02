@@ -45,8 +45,17 @@ module YamlBot
     end
 
     def validate_root_keys
+      check_existance_of_root_keys_key
       check_existance_of_required_and_optional_keys
       fail_validation_if_missing_required_and_optional_keys
+    end
+
+    def check_existance_of_root_keys_key
+      return unless @rules[:root_keys].nil?
+      msg = "Missing 'root_keys' key\n"
+      msg += "Rules file must specify 'root_keys' as the top level key\n"
+      logger.error msg
+      raise YamlBot::ValidationError, msg
     end
 
     def check_existance_of_required_and_optional_keys
