@@ -3,7 +3,7 @@ require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new(:spec)
 
-desc 'run rubocop'
+desc 'Run rubocop'
 task :rubocop do
   require 'rubocop'
   cli = RuboCop::CLI.new
