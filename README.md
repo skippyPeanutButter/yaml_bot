@@ -9,9 +9,15 @@ YamlBot is not a Yaml linter, it is a Yaml format validator.
 
 ### Why
 
-Specify custom rules for different Yaml files.  You should be able to feed
-YamlBot a specification for how a Yaml file should look and then let it do the
-rest.
+Mistakes can often be made when working with yaml-based configuration. Systems
+such as travis-ci, rubocop, and other tools that utilize yaml files to govern
+how they work often present users with a multitude of keys that can take on
+many possible values. `yamlbot` allows you to feed it a set of rules that a
+yaml-based system follows and then validate any yaml file against those rules.
+
+If you have a tool that works off of a yaml configuration then you can craft
+your own [`.yamlbot.yml` file][yamlbot-spec], share it with others, and have
+them use `yamlbot` to validate their config against your specified rules.
 
 ### Installation
 
@@ -31,11 +37,27 @@ Or install it yourself as:
 
 ### Usage
 
-Create or make use of a specification for what a particular yaml file should
-contain (see [yamlbot file specification][yamlbot-spec].
+Create a `.yamlbot.yml` file with a set of rules that you want to validate yaml
+files against [yamlbot file specification][yamlbot-spec].
+
+Usage assuming the existence `.yamlbot.yml` in the current directory:
+
+```bash
+yamlbot -f yaml_file_to_validate
+```
+
+Usage passing the path to a rules file
+(doesn't have to be named `.yamlbot.yml`):
+
+```bash
+yamlbot -f yaml_file_to_validate [-r path_to_rules_file]
+```
 
 ```bash
 Usage: yamlbot -f yaml_file_to_validate [-r path_to_rules_file]
+        -r, --rule-file rules           The rules you will be evaluating your yaml against
+        -f, --file file                 The file to validate against
+        -h, --help                      help
 ```
 
 ### Development
