@@ -38,10 +38,10 @@ module YamlBot
       if !keys[index][key][:subkeys].nil?
         validate_subkeys(yaml, key, keys, index, ancestors)
       else
-        validate_accepted_types(yaml[key],
-                                keys[index][key][:accepted_types],
-                                ancestors,
-                                key)
+        validate_accepted_types_or_key_values(yaml[key],
+                                              keys[index][key],
+                                              ancestors,
+                                              key)
       end
     end
 
@@ -55,10 +55,37 @@ module YamlBot
       end
     end
 
+    def validate_accepted_types_or_key_values(value, key_block, ancestors, key)
+      accepted_types = key_block[:accepted_types]
+      key_values = key_block[:values]
+      unless key_values.nil?
+        validate_key_values(value, key_values, ancestors, key)
+        return
+      end
+
+      validate_accepted_types(value, accepted_types, ancestors, key)
+    end
+
     def validate_existance_of_rules_and_yaml_files
       return unless rules.nil? || yaml_file.nil?
       msg = "Rules file, or Yaml file is not set\n"
       raise YamlBot::ValidationError, msg
+    end
+
+    def validate_accepted_types(value, accepted_types, ancestors, key)
+      if accepted_types.include?(value.class.to_s)
+        log_successful_key_validation(value, ancestors)
+      else
+        log_failed_key_validation(value, accepted_types, ancestors, key)
+      end
+    end
+
+    def validate_key_values(value, key_values, ancestors, key)
+      if key_values.include?('*') || key_values.include?(value)
+        log_successful_key_validation(value, ancestors)
+      else
+        log_failed_key_validation(value, key_values, ancestors, key)
+      end
     end
 
     def log_missing_key(key_type, ancestors)
@@ -67,14 +94,6 @@ module YamlBot
         logger.error "Missing required key: #{ancestors}"
       else
         logger.warn "Not utilizing optional key: #{ancestors}"
-      end
-    end
-
-    def validate_accepted_types(value, accepted_types, ancestors, key)
-      if accepted_types.include?(value.class.to_s)
-        log_successful_key_validation(value, ancestors)
-      else
-        log_failed_key_validation(value, accepted_types, ancestors, key)
       end
     end
 
