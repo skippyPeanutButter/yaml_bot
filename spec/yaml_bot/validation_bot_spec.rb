@@ -44,19 +44,7 @@ describe YamlBot::ValidationBot do
       it 'logs an error message and increases the violation count when a key '\
          'has a value of an invalid type' do
         rules = {
-          root_keys:
-            {
-              required:
-                [
-                  {
-                    key:
-                      {
-                        accepted_types:
-                        ['Fixnum']
-                      }
-                  }
-                ]
-            }
+          root_keys: { required: [{ key: { accepted_types: ['Fixnum'] } }] }
         }
         yaml_file = { key: true }
         @yaml_bot.rules = rules
