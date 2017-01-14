@@ -28,7 +28,6 @@ module YamlBot
         if yaml.keys.include?(key)
           validate_subkeys_or_accepted_types(yaml, key, keys, index, ancestors)
         else
-          ancestors = ancestors.join('.')
           log_missing_key(key_type, ancestors)
         end
       end
@@ -94,9 +93,9 @@ module YamlBot
     def log_missing_key(key_type, ancestors)
       if key_type == :required
         self.violations += 1
-        logger.error "Missing required key: '#{ancestors}'"
+        logger.error "Missing required key: '#{ancestors.join('.')}'"
       else
-        logger.warn "Optional key: '#{ancestors}' not utilized"
+        logger.warn "Optional key: '#{ancestors.join('.')}' not utilized"
       end
     end
 
