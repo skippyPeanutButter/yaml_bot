@@ -1,0 +1,10 @@
+root_keys:
+  optional:
+    - language:
+        accepted_types:
+          - String
+        values:
+          - android
+          - go
+          - ruby
+          - shell

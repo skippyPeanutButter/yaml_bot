@@ -1,0 +1,5 @@
+root_keys:
+  optional:
+    - language:
+        accepted_types:
+          - String

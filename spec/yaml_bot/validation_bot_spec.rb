@@ -2,6 +2,11 @@ require 'spec_helper'
 require 'active_support/core_ext/hash/keys'
 require 'stringio'
 
+ESCAPES = { green: "\033[32m",
+            yellow: "\033[33m",
+            red: "\033[31m",
+            reset: "\033[0m" }.freeze
+
 describe YamlBot::ValidationBot do
   before :each do
     @yaml_bot = YamlBot::ValidationBot.new
@@ -44,27 +49,15 @@ describe YamlBot::ValidationBot do
       it 'logs an error message and increases the violation count when a key '\
          'has a value of an invalid type' do
         rules = {
-          root_keys:
-            {
-              required:
-                [
-                  {
-                    key:
-                      {
-                        accepted_types:
-                        ['Fixnum']
-                      }
-                  }
-                ]
-            }
+          root_keys: { required: [{ key: { accepted_types: ['Fixnum'] } }] }
         }
         yaml_file = { key: true }
         @yaml_bot.rules = rules
         @yaml_bot.yaml_file = yaml_file
         key = 'key'
         value = true
-        msg = "Value: #{value} of class #{value.class} is not a valid type "\
-              "for key: #{key}\n"
+        msg = "Value: '#{value}' of class #{value.class} is not a valid type "\
+              "for key: '#{key}'\n"
 
         expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
         expect(@yaml_bot.violations).to eq(1)
@@ -113,9 +106,9 @@ describe YamlBot::ValidationBot do
                           '/../fixtures/valid_rules_file.yml'
         yaml = { key1: { subkey1: 'value1', subkey2: 42 }, key2: 'value2' }
         msgs = [
-          'Key: key1.subkey1 successfully utilized with a value of value1',
-          'Key: key1.subkey2 successfully utilized with a value of 42',
-          'Key: key2 successfully utilized with a value of value2'
+          "Key: 'key1.subkey1' contains a value of a valid type String",
+          "Key: 'key1.subkey2' contains a value of a valid type Fixnum",
+          "Key: 'key2' contains a value of a valid type String"
         ]
         @yaml_bot.rules = YAML.load(
           File.open(rules_file_name)
@@ -125,6 +118,48 @@ describe YamlBot::ValidationBot do
         msgs.each do |msg|
           expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
         end
+      end
+
+      it 'validates keys with accepted_types' do
+        file_name = '/../fixtures/valid_rules_file_with_only_accepted_types.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) + file_name
+        yaml = { language: 'go' }
+        msg = "Key: 'language' contains a value of a valid type String"
+        @yaml_bot.rules = YAML.load(
+          File.open(rules_file_name)
+        ).deep_symbolize_keys
+        @yaml_bot.yaml_file = yaml
+
+        expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
+      end
+
+      it 'validates key values against a list of values' do
+        file_name = '/../fixtures/valid_rules_file_with_only_values.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) + file_name
+        yaml = { language: 'go' }
+        msg = "Key: 'language' contains valid value go"
+        @yaml_bot.rules = YAML.load(
+          File.open(rules_file_name)
+        ).deep_symbolize_keys
+        @yaml_bot.yaml_file = yaml
+
+        expect { @yaml_bot.scan }.to output(/#{msg}/).to_stdout
+      end
+
+      it 'validates keys with accepted_types and values' do
+        file_name = '/../fixtures/valid_rules_file_with_types_and_values.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) + file_name
+        yaml = { language: 'go' }
+        msg = "Key: 'language' contains valid value go"
+        msg = ESCAPES[:green] + msg + ESCAPES[:reset] + "\n"
+        msg += ESCAPES[:green] + "Key: 'language' contains a value of a "\
+               'valid type String' + ESCAPES[:reset] + "\n"
+        @yaml_bot.rules = YAML.load(
+          File.open(rules_file_name)
+        ).deep_symbolize_keys
+        @yaml_bot.yaml_file = yaml
+
+        expect { @yaml_bot.scan }.to output(msg).to_stdout
       end
     end
 

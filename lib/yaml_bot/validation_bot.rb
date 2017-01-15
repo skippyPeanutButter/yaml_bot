@@ -28,7 +28,6 @@ module YamlBot
         if yaml.keys.include?(key)
           validate_subkeys_or_accepted_types(yaml, key, keys, index, ancestors)
         else
-          ancestors = ancestors.join('.')
           log_missing_key(key_type, ancestors)
         end
       end
@@ -38,10 +37,9 @@ module YamlBot
       if !keys[index][key][:subkeys].nil?
         validate_subkeys(yaml, key, keys, index, ancestors)
       else
-        validate_accepted_types(yaml[key],
-                                keys[index][key][:accepted_types],
-                                ancestors,
-                                key)
+        validate_accepted_types_or_key_values(yaml[key],
+                                              keys[index][key],
+                                              ancestors)
       end
     end
 
@@ -55,40 +53,58 @@ module YamlBot
       end
     end
 
+    def validate_accepted_types_or_key_values(value, key_block, ancestors)
+      types = key_block[:accepted_types]
+      key_values = key_block[:values]
+      validate_key_values(value, key_values, ancestors) unless key_values.nil?
+      validate_accepted_types(value, types, ancestors) unless types.nil?
+    end
+
     def validate_existance_of_rules_and_yaml_files
       return unless rules.nil? || yaml_file.nil?
       msg = "Rules file, or Yaml file is not set\n"
       raise YamlBot::ValidationError, msg
     end
 
+    def validate_accepted_types(value, types, ancestors)
+      if types.include?(value.class.to_s)
+        msg = "Key: '#{ancestors.join('.')}' contains a value of a valid type "\
+              "#{value.class}"
+        log_successful_key_validation(msg)
+      else
+        msg = "Value: '#{value}' of class #{value.class} is not a valid type "\
+              "for key: '#{ancestors.join('.')}'\n"
+        msg += "Valid types for key '#{ancestors.join('.')}' include #{types}\n"
+        log_failed_key_validation(msg)
+      end
+    end
+
+    def validate_key_values(value, key_values, ancestors)
+      if key_values.include?('*') || key_values.include?(value)
+        msg = "Key: '#{ancestors.join('.')}' contains valid value #{value}"
+        log_successful_key_validation(msg)
+      else
+        msg = "Key: '#{ancestors.join('.')}' contains invalid value #{value}\n"
+        msg += "Valid values include #{key_values}"
+        log_failed_key_validation(msg)
+      end
+    end
+
     def log_missing_key(key_type, ancestors)
       if key_type == :required
         self.violations += 1
-        logger.error "Missing required key: #{ancestors}"
+        logger.error "Missing required key: '#{ancestors.join('.')}'"
       else
-        logger.warn "Not utilizing optional key: #{ancestors}"
+        logger.warn "Optional key: '#{ancestors.join('.')}' not utilized"
       end
     end
 
-    def validate_accepted_types(value, accepted_types, ancestors, key)
-      if accepted_types.include?(value.class.to_s)
-        log_successful_key_validation(value, ancestors)
-      else
-        log_failed_key_validation(value, accepted_types, ancestors, key)
-      end
-    end
-
-    def log_successful_key_validation(value, ancestors)
-      msg = "Key: #{ancestors.join('.')} successfully utilized with a value "\
-            "of #{value}"
+    def log_successful_key_validation(msg)
       logger.info msg
     end
 
-    def log_failed_key_validation(value, accepted_types, ancestors, key)
+    def log_failed_key_validation(msg)
       self.violations += 1
-      msg = "Value: #{value} of class #{value.class} is not a valid type "\
-            "for key: #{ancestors.join('.')}\n"
-      msg += "Valid types for key #{key} include: #{accepted_types}\n"
       logger.error msg
     end
   end
