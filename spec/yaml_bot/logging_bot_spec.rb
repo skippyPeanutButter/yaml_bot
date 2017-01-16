@@ -10,7 +10,7 @@ ESCAPES = { green: "\033[32m",
 describe YamlBot::LoggingBot do
   before :each do
     @log_file = StringIO.new
-    @logger = YamlBot::LoggingBot.new(@log_file)
+    @logger = YamlBot::LoggingBot.new(@log_file, color: true)
   end
 
   it 'has a log level of info by default' do
@@ -27,7 +27,7 @@ describe YamlBot::LoggingBot do
       expect(@log_file.string).to eq(expected_string)
     end
 
-    it 'outputs a message in green to stdout' do
+    it 'outputs a message in green to stdout when color is enabled' do
       msg = 'This is a test'
       expected_string = ESCAPES[:green] + msg + ESCAPES[:reset] + "\n"
 
@@ -45,7 +45,7 @@ describe YamlBot::LoggingBot do
       expect(@log_file.string).to eq(expected_string)
     end
 
-    it 'outputs a message in yellow to stdout' do
+    it 'outputs a message in yellow to stdout when color is enabled' do
       msg = 'This is a test'
       expected_string = ESCAPES[:yellow] + msg + ESCAPES[:reset] + "\n"
 
@@ -63,7 +63,7 @@ describe YamlBot::LoggingBot do
       expect(@log_file.string).to eq(expected_string)
     end
 
-    it 'outputs a message in red to stdout' do
+    it 'outputs a message in red to stdout when color is enabled' do
       msg = 'This is a test'
       expected_string = ESCAPES[:red] + msg + ESCAPES[:reset] + "\n"
 

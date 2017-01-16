@@ -26,6 +26,10 @@ parser = OptionParser.new do |opts|
     options[:file] = file
   end
 
+  opts.on('-c', '--color', 'Enable colored output') do |color|
+    options[:color] = color
+  end
+
   opts.on('-h', '--help', 'help') do
     puts parser
     exit

@@ -11,7 +11,7 @@ module YamlBot
     def initialize(opts = {})
       @options = opts
       log_file = File.new('yaml_bot.log', 'w')
-      @logger_bot = LoggingBot.new(log_file)
+      @logger_bot = LoggingBot.new(log_file, color: @options[:color])
       @rules_bot = RulesBot.new
       @validation_bot = ValidationBot.new
     end
@@ -119,6 +119,7 @@ module YamlBot
         "\t-r, --rule-file rules\t\tThe rules you will be evaluating your "\
         'yaml against',
         "\t-f, --file file\t\t\tThe file to validate against",
+        "\t-c, --color\t\t\tEnable colored output",
         "\t-h, --help\t\t\thelp"
       ].join("\n")
       puts msg
