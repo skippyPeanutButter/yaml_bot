@@ -16,10 +16,10 @@ module YamlBot
 
     attr_accessor :log_file, :log_level
 
-    def initialize(log_file, level: :info, color: false)
+    def initialize(log_file, level: :info, no_color: false)
       @log_file = log_file
       @log_level = level.to_sym unless valid_log_level(level)
-      @enable_color = color
+      @no_color = no_color
     end
 
     def info(message)
@@ -51,9 +51,9 @@ module YamlBot
     def emit(opts = {})
       color   = opts[:color]
       message = opts[:message]
-      print ESCAPES[color] if @enable_color
+      print ESCAPES[color] unless @no_color
       print message
-      print ESCAPES[:reset] if @enable_color
+      print ESCAPES[:reset] unless @no_color
       print "\n"
     end
 

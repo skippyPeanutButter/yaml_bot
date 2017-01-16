@@ -10,7 +10,7 @@ ESCAPES = { green: "\033[32m",
 describe YamlBot::ValidationBot do
   before :each do
     @yaml_bot = YamlBot::ValidationBot.new
-    @yaml_bot.logger = YamlBot::LoggingBot.new(StringIO.new)
+    @yaml_bot.logger = YamlBot::LoggingBot.new(StringIO.new, no_color: true)
   end
 
   it 'is initialized with 0 violations' do

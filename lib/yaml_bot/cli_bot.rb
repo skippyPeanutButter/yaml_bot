@@ -11,7 +11,7 @@ module YamlBot
     def initialize(opts = {})
       @options = opts
       log_file = File.new('yaml_bot.log', 'w')
-      @logger_bot = LoggingBot.new(log_file, color: @options[:color])
+      @logger_bot = LoggingBot.new(log_file, no_color: @options[:no_color])
       @rules_bot = RulesBot.new
       @validation_bot = ValidationBot.new
     end

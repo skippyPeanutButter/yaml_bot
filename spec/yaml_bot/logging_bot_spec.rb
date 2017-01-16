@@ -10,7 +10,7 @@ ESCAPES = { green: "\033[32m",
 describe YamlBot::LoggingBot do
   before :each do
     @log_file = StringIO.new
-    @logger = YamlBot::LoggingBot.new(@log_file, color: true)
+    @logger = YamlBot::LoggingBot.new(@log_file)
   end
 
   it 'has a log level of info by default' do
