@@ -10,7 +10,7 @@ ESCAPES = { green: "\033[32m",
 describe YamlBot::ValidationBot do
   before :each do
     @yaml_bot = YamlBot::ValidationBot.new
-    @yaml_bot.logger = YamlBot::LoggingBot.new(StringIO.new)
+    @yaml_bot.logger = YamlBot::LoggingBot.new(StringIO.new, no_color: true)
   end
 
   it 'is initialized with 0 violations' do
@@ -150,10 +150,8 @@ describe YamlBot::ValidationBot do
         file_name = '/../fixtures/valid_rules_file_with_types_and_values.yml'
         rules_file_name = File.dirname(File.realpath(__FILE__)) + file_name
         yaml = { language: 'go' }
-        msg = "Key: 'language' contains valid value go"
-        msg = ESCAPES[:green] + msg + ESCAPES[:reset] + "\n"
-        msg += ESCAPES[:green] + "Key: 'language' contains a value of a "\
-               'valid type String' + ESCAPES[:reset] + "\n"
+        msg = "Key: 'language' contains valid value go\n"
+        msg += "Key: 'language' contains a value of a valid type String\n"
         @yaml_bot.rules = YAML.load(
           File.open(rules_file_name)
         ).deep_symbolize_keys
