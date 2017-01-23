@@ -13,9 +13,9 @@ module YamlBot
 
     def scan
       defaults = rules['defaults']
-      rules['rules'].each do |key|
-        key = KeyBot.new(key, yaml_file, defaults)
-        self.violations += key.validate
+      rules['rules'].each do |item|
+        key_bot = KeyBot.new(item, yaml_file, defaults)
+        self.violations += key_bot.validate
       end
     end
   end
