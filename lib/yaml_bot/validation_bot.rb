@@ -1,4 +1,5 @@
 require 'yaml'
+require 'yaml_bot/key_bot'
 require 'yaml_bot/logging_bot'
 require 'yaml_bot/rules_bot'
 require 'yaml_bot/validation_error'

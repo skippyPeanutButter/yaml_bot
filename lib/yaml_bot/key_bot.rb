@@ -6,10 +6,32 @@ module YamlBot
       self.key = key
       self.yaml_file = yaml_file
       self.defaults = defaults
+      self.valid = false
     end
 
     def validate
+      [
+        :check_if_key_is_required,
+        :check_and_requires,
+        :check_or_requires,
+        :check_val_whitelist,
+        :check_val_blacklist,
+        :check_types
+      ].each do |method|
+        self.send(method)
+        break if @valid
+      end
+      @valid ? 0 : 1
+    end
 
+    def check_if_key_is_required
+      rules = defaults.merge(key)
+      if rules['required_key'] && !get_object_value(yaml_file, key['key'], nil).nil?
+        @valid = true
+      end
+      if !rules['required_key']
+        @valid = true
+      end
     end
 
     def get_object_value(yaml, key, default_value)

@@ -1,0 +1,25 @@
+defaults:
+  required_key: false
+  types: ['String', 'List']
+rules:
+  - key: 'language'
+    required_key: true
+    types: ['String']
+    value_whitelist: ['android', 'go', 'python', 'ruby']
+  - key: 'env'
+    types: ['String', 'List', 'Object']
+  - key: 'env.global'
+  - key: 'env.matrix'
+  - key: 'before_install'
+  - key: 'install'
+  - key: 'before_script'
+  - key: 'script'
+  - key: 'branches.only'
+    types: ['List']
+  - key: 'branches.except'
+    types: ['List']
+  - key: 'jenkins.sudo'
+    types: ['Boolean', 'String']
+  - key: 'jenkins.use_gerrit'
+    types: ['Boolean', 'String']
+  - key: 'jenkins.collect.artifacts'
