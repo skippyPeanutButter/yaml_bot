@@ -1,0 +1,6 @@
+defaults:
+  required_key: false
+  types: ['String', 'List']
+rules:
+  - key: 'jenkins.secrets'
+    and_requires: ['jenkins.secrets_id']

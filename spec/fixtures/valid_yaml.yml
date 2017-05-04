@@ -1,0 +1,27 @@
+language: go
+jdk: oraclejdk7
+install:
+  - "sudo yum clean all"
+  - "echo 'y' | android update sdk --no-ui --all --filter build-tools-23.0.3"
+  - "sudo yum -y install glibc.i686 libz.so.1 libgcc libgcc_s.so.1"
+
+script:
+  - export tpsReleaseSigningStoreFile=${WORKSPACE}/keystore/tpsrelease.keystore.jks
+  - export debugSigningStoreFile=${WORKSPACE}/keystore/test-release.keystore.jks
+  - export prodReleaseSigningStoreFile=${WORKSPACE}/keystore/prodrelease.keystore.jks
+  - export debugKeyPassword=xfhome
+  - export debugStorePassword=xfhome
+  - export debugKeyAlias=xfhrel
+  - ./gradlew antHillBuild --info
+
+jenkins:
+  use_gerrit: false
+  sudo: true
+  collect:
+    artifacts:
+      - "**/App/build/**/*.apk"
+      - "**/reports/tests/**/index.html"
+  secrets_id: key_name
+  secrets:
+    - key: VAR_NAME
+      pass: password

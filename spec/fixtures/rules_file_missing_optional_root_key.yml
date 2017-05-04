@@ -1,5 +1,0 @@
-root_keys:
-  required:
-    - key:
-        accepted_types:
-          - Fixnum
