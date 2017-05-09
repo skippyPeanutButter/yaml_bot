@@ -2,10 +2,10 @@ module YamlBot
   class KeyBot
     attr_accessor :defaults, :invalid, :key, :yaml_file
 
-    def initialize(key, yaml_file, defaults = nil)
+    def initialize(key, yaml_file, defaults)
       self.key = key
       self.yaml_file = yaml_file
-      self.defaults = defaults
+      self.defaults = defaults || {}
       self.invalid = false
     end
 
@@ -33,7 +33,8 @@ module YamlBot
     end
 
     def check_and_requires
-      return if key['and_requires'].nil?
+      yaml_key = get_object_value(yaml_file, key['key'])
+      return if yaml_key.nil? ||  key['and_requires'].nil?
       key['and_requires'].each do |k|
         result = get_object_value(yaml_file, k)
         if result.nil?
@@ -43,28 +44,33 @@ module YamlBot
       end
     end
 
+    # If the key being checked, or any of
+    # the keys in the "or_requires" list
+    # are in the yaml then check passes
     def check_or_requires
-      if !key['or_requires'].nil?
-        # check or requirements
+      rules = defaults.merge(key)
+      yaml_key = get_object_value(yaml_file, key['key'])
+      return if key['or_requires'].nil?
+      alt_key_found = false
+      key['or_requires'].each do |k|
+        result = get_object_value(yaml_file, k)
+        unless result.nil?
+          alt_key_found = true
+        end
       end
+      @invalid = true if yaml_key.nil? && !alt_key_found
     end
 
     def check_val_whitelist
-      if !key['value_whitelist'].nil?
-        # check value_whitelist
-      end
+      return if key['value_whitelist'].nil?
     end
 
     def check_val_blacklist
-      if !key['value_blacklist'].nil?
-        # check value_blacklist
-      end
+      return if key['value_blacklist'].nil?
     end
 
     def check_types
-      if !key['types'].nil?
-        # check types
-      end
+      return if key['types'].nil?
     end
 
     private

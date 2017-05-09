@@ -38,11 +38,25 @@ describe YamlBot::KeyBot do
         expect(@keybot.validate).to eq(1)
       end
 
-      it 'should return a violation if a key is missing required complement keys' do
+      it 'should return a violation if a required key and ["and_required"] keys are missing' do
         file_name = File.dirname(File.realpath(__FILE__)) +
-                    '/../fixtures/invalid_yaml_missing_and_requires_key.yml'
+                    '/../fixtures/invalid_yaml_missing_and_requires_keys.yml'
         rules_file_name = File.dirname(File.realpath(__FILE__)) +
                           '/../fixtures/valid_rules_and_requires.yml'
+        yaml = YAML.load_file(file_name)
+        rules = YAML.load_file(rules_file_name)
+        key = rules['rules'].first
+        defaults = rules['defaults']
+        @keybot = YamlBot::KeyBot.new(key, yaml, defaults)
+
+        expect(@keybot.validate).to eq(1)
+      end
+
+      it 'should return a violation if a required key or ["or_requires"] keys are missing' do
+        file_name = File.dirname(File.realpath(__FILE__)) +
+                    '/../fixtures/invalid_yaml_missing_or_requires_keys.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/valid_rules_or_requires.yml'
         yaml = YAML.load_file(file_name)
         rules = YAML.load_file(rules_file_name)
         key = rules['rules'].first
