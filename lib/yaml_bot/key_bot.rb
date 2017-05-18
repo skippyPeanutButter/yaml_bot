@@ -49,7 +49,7 @@ module YamlBot
     # are in the yaml then check passes
     def check_or_requires
       rules = defaults.merge(key)
-      yaml_key = get_object_value(yaml_file, key['key'])
+      value = get_object_value(yaml_file, key['key'])
       return if key['or_requires'].nil?
       alt_key_found = false
       key['or_requires'].each do |k|
@@ -58,15 +58,25 @@ module YamlBot
           alt_key_found = true
         end
       end
-      @invalid = true if yaml_key.nil? && !alt_key_found
+      @invalid = true if value.nil? && !alt_key_found
     end
 
     def check_val_whitelist
       return if key['value_whitelist'].nil?
+      value = get_object_value(yaml_file, key['key'])
+      if !key['value_whitelist'].include?(value)
+        @invalid = true
+        puts "Invalid value #{value} for whitelist #{key['value_whitelist']}"
+      end
     end
 
     def check_val_blacklist
       return if key['value_blacklist'].nil?
+      value = get_object_value(yaml_file, key['key'])
+      if key['value_blacklist'].include?(value)
+        @invalid = true
+        puts "Blacklisted value specified #{value}"
+      end
     end
 
     def check_types

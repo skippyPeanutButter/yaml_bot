@@ -65,6 +65,34 @@ describe YamlBot::KeyBot do
 
         expect(@keybot.validate).to eq(1)
       end
+
+      it 'should return a violation if value_whitelist is defined and key value is not in list' do
+        file_name = File.dirname(File.realpath(__FILE__)) +
+                    '/../fixtures/invalid_yaml_missing_whitelist_value.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/valid_rules_value_whitelist.yml'
+        yaml = YAML.load_file(file_name)
+        rules = YAML.load_file(rules_file_name)
+        key = rules['rules'].first
+        defaults = rules['defaults']
+        @keybot = YamlBot::KeyBot.new(key, yaml, defaults)
+
+        expect(@keybot.validate).to eq(1)
+      end
+
+      it 'should return a violation if a key has a blacklisted value' do
+        file_name = File.dirname(File.realpath(__FILE__)) +
+                    '/../fixtures/invalid_yaml_blacklist_value.yml'
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/valid_rules_value_blacklist.yml'
+        yaml = YAML.load_file(file_name)
+        rules = YAML.load_file(rules_file_name)
+        key = rules['rules'].first
+        defaults = rules['defaults']
+        @keybot = YamlBot::KeyBot.new(key, yaml, defaults)
+
+        expect(@keybot.validate).to eq(1)
+      end
     end
   end
 
