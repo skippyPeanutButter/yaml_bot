@@ -26,5 +26,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'activesupport', '~> 5.0'
 
-  spec.required_ruby_version = '>=2.2'
+  spec.required_ruby_version = '>=2.4'
 end
