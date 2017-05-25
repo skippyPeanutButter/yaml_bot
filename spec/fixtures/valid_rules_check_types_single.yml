@@ -1,0 +1,3 @@
+rules:
+  - key: 'key1'
+    types: 'String'

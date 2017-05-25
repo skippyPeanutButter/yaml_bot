@@ -93,6 +93,38 @@ describe YamlBot::KeyBot do
 
         expect(@keybot.validate).to eq(1)
       end
+
+      context 'key may have a value of a single specified type' do
+        it 'should return a violation if a key has a value that is not of a specified type' do
+          file_name = File.dirname(File.realpath(__FILE__)) +
+                      '/../fixtures/invalid_yaml_invalid_type.yml'
+          rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                            '/../fixtures/valid_rules_check_types_single.yml'
+          yaml = YAML.load_file(file_name)
+          rules = YAML.load_file(rules_file_name)
+          key = rules['rules'].first
+          defaults = rules['defaults']
+          @keybot = YamlBot::KeyBot.new(key, yaml, defaults)
+
+          expect(@keybot.validate).to eq(1)
+        end
+      end
+
+      context 'key may have a value of multiple specified types' do
+        it 'should return a violation if a key has a value type that is not included in the specified types' do
+          file_name = File.dirname(File.realpath(__FILE__)) +
+                      '/../fixtures/invalid_yaml_invalid_type.yml'
+          rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                            '/../fixtures/valid_rules_check_types_list.yml'
+          yaml = YAML.load_file(file_name)
+          rules = YAML.load_file(rules_file_name)
+          key = rules['rules'].first
+          defaults = rules['defaults']
+          @keybot = YamlBot::KeyBot.new(key, yaml, defaults)
+
+          expect(@keybot.validate).to eq(1)
+        end
+      end
     end
   end
 

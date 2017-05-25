@@ -2,6 +2,14 @@ module YamlBot
   class KeyBot
     attr_accessor :defaults, :invalid, :key, :yaml_file
 
+    TYPE_MAP = {
+      object: Hash,
+      list: Array,
+      string: String,
+      number: [Integer, Float],
+      boolean: [TrueClass, FalseClass]
+    }
+
     def initialize(key, yaml_file, defaults)
       self.key = key
       self.yaml_file = yaml_file
@@ -81,6 +89,24 @@ module YamlBot
 
     def check_types
       return if key['types'].nil?
+      value = get_object_value(yaml_file, key['key'])
+      if key['types'].instance_of?(String)
+        @invalid = !value.instance_of?(TYPE_MAP[key['types'].downcase.to_sym])
+      else
+        @invalid = !key['types'].any? do |type|
+          type_value = TYPE_MAP[type.downcase.to_sym]
+          if type_value.instance_of?(Array)
+            type_value.each { |t| value.instance_of?(t) }
+          else
+            value.instance_of?(type_value)
+          end
+        end
+      end
+
+      if @invalid
+        puts "Invalid value type specified: #{value.class}"
+        puts "Valid types include #{key['types']}"
+      end
     end
 
     private
