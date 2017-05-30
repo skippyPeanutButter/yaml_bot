@@ -36,7 +36,7 @@ module YamlBot
       rules = defaults.merge(key)
       yaml_key = get_object_value(yaml_file, key['key'])
       if rules['required_key'] && yaml_key.nil?
-        @invalid = true
+        @invalid = true if rules['or_requires'].nil?
       end
     end
 
