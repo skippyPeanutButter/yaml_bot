@@ -1,0 +1,3 @@
+defaults:
+  required_key: false
+  types: ['String', 'List']

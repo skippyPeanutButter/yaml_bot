@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'yaml'
 require 'yaml_bot/rules_bot'
+require 'yaml_bot/validation_error'
 
 describe YamlBot::RulesBot do
   describe '#validate_rules' do
@@ -22,9 +23,83 @@ describe YamlBot::RulesBot do
     end
 
     context 'failed validation' do
-      it 'should raise a ValidationError when a rules file is missing the rules key'
-      it 'should raise a ValidationError when a set of rules contains an unapproved key'
-      it 'should raise a ValidationError when a set of rules is missing a key to validate'
+      it 'should raise a ValidationError when a rules file has invalid defaults' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_invalid_default.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        valid_keys = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
+                     '/../../lib/yaml_bot/resources/valid_rules_keys.yml')
+        invalid_keys = ['invalid_key']
+        msg = "Invalid default(s) specified in rules file: #{invalid_keys}\n"
+        msg += "Valid rules keys include: #{valid_keys}\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when a set of rules contains an invalid key' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_invalid_rules_key.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        valid_keys = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
+                     '/../../lib/yaml_bot/resources/valid_rules_keys.yml')
+        invalid_keys = ['error_causing_key']
+        msg = "Invalid key(s) specified in rules file: #{invalid_keys}\n"
+        msg += "Valid rules keys include: #{valid_keys}\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when a rules file is missing the rules key' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_missing_rules.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        invalid_keys = ['invalid_key']
+        msg = 'rules section not defined in .yamlbot file'
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when a set of rules is missing a key to validate' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_missing_key_from_list.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        msg = "Missing required key 'key' within rules file.\n"
+        msg += "Or a key name has a value that is not a String.\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when a set of rules is missing a key to validate' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_missing_key_from_list.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        msg = "Missing required key 'key' within rules file.\n"
+        msg += "Or a key name has a value that is not a String.\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when a key isn\'t specified as required/not-required and there are no defaults' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_missing_required_key.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        key = 'jenkins.sudo'
+        msg = "Missing required key 'required_key' for key: #{key}.\n"
+        msg += "Or 'required_key' has a value that is not a Boolean.\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
+
+      it 'should raise a ValidationError when \'required_key\' has a value that is not boolean' do
+        rules_file_name = File.dirname(File.realpath(__FILE__)) +
+                          '/../fixtures/invalid_rules_required_key_with_non_boolean_value.yml'
+        @rules_bot.rules = YAML.load_file(rules_file_name)
+        key = 'language'
+        msg = "Missing required key 'required_key' for key: #{key}.\n"
+        msg += "Or 'required_key' has a value that is not a Boolean.\n"
+
+        expect { @rules_bot.validate_rules }.to raise_error(YamlBot::ValidationError, msg)
+      end
     end
 
     after :each do

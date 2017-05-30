@@ -33,7 +33,7 @@ module YamlBot
       key_map.keys.each { |k| invalid_keys << k if !valid_keys.include?(k) }
       if !invalid_keys.empty?
         msg = "Invalid key(s) specified in rules file: #{invalid_keys}\n"
-        msg = "Valid rules keys include: #{valid_keys}\n"
+        msg += "Valid rules keys include: #{valid_keys}\n"
         raise ValidationError, msg
       end
 
@@ -43,11 +43,11 @@ module YamlBot
         raise ValidationError, msg
       end
 
-      merged_keys = {}
+      merged_keys = {}.merge(key_map)
       merged_keys = @rules['defaults'].merge(key_map) if !@rules['defaults'].nil? && @rules['defaults'].instance_of?(Hash)
       if merged_keys['required_key'].nil? ||
         (!merged_keys['required_key'].instance_of?(TrueClass) && !merged_keys['required_key'].instance_of?(FalseClass))
-        msg = "Missing required key 'required_key' within rules file.\n"
+        msg = "Missing required key 'required_key' for key: #{key_map['key']}.\n"
         msg += "Or 'required_key' has a value that is not a Boolean.\n"
         raise ValidationError, msg
       end
@@ -60,7 +60,7 @@ module YamlBot
       @rules['defaults'].keys.each { |k| invalid_keys << k if !valid_keys.include?(k) }
       if !invalid_keys.empty?
         msg = "Invalid default(s) specified in rules file: #{invalid_keys}\n"
-        msg = "Valid rules keys include: #{valid_keys}\n"
+        msg += "Valid rules keys include: #{valid_keys}\n"
         raise ValidationError, msg
       end
     end

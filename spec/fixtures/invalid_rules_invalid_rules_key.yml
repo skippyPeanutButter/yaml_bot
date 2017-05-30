@@ -1,0 +1,9 @@
+rules:
+  - key: 'language'
+    required_key: true
+    types: ['String']
+    error_causing_key: 43
+    value_whitelist: ['android', 'go', 'python', 'ruby']
+  - key: 'jenkins.sudo'
+  - key: 'jenkins.secrets'
+    and_requires: ['jenkins.secrets_id']
