@@ -10,9 +10,9 @@ module YamlBot
     end
 
     def validate_rules
-      raise StandardError, '.yamlbot rules file is not set.' if @rules.nil?
+      raise ValidationError, '.yamlbot rules file is not set.' if @rules.nil?
       raise ValidationError, 'rules section not defined in .yamlbot file' if @rules['rules'].nil?
-      validate_defaults if !@rules['defaults'].nil?
+      validate_rules_keys(@rules['defaults']) if !@rules['defaults'].nil?
       if @rules['rules'].instance_of?(Array)
         @rules['rules'].each do |key_map|
           validate_key_map(key_map)
@@ -27,15 +27,7 @@ module YamlBot
 
     private
     def validate_key_map(key_map)
-      valid_keys = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
-                   '/resources/valid_rules_keys.yml')
-      invalid_keys = []
-      key_map.keys.each { |k| invalid_keys << k if !valid_keys.include?(k) }
-      if !invalid_keys.empty?
-        msg = "Invalid key(s) specified in rules file: #{invalid_keys}\n"
-        msg += "Valid rules keys include: #{valid_keys}\n"
-        raise ValidationError, msg
-      end
+      validate_rules_keys(key_map)
 
       if key_map['key'].nil? || !key_map['key'].instance_of?(String)
         msg = "Missing required key 'key' within rules file.\n"
@@ -53,13 +45,13 @@ module YamlBot
       end
     end
 
-    def validate_defaults
+    def validate_rules_keys(key_map)
       valid_keys = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
                    '/resources/valid_rules_keys.yml')
       invalid_keys = []
-      @rules['defaults'].keys.each { |k| invalid_keys << k if !valid_keys.include?(k) }
+      key_map.keys.each { |k| invalid_keys << k if !valid_keys.include?(k) }
       if !invalid_keys.empty?
-        msg = "Invalid default(s) specified in rules file: #{invalid_keys}\n"
+        msg = "Invalid key(s) specified in rules file: #{invalid_keys}\n"
         msg += "Valid rules keys include: #{valid_keys}\n"
         raise ValidationError, msg
       end
