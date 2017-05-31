@@ -65,7 +65,7 @@ module YamlBot
     end
 
     def print_results
-      if @validation_bot.violations > 0
+      if @validation_bot.violations.positive?
         @logger_bot.error pluralize(@validation_bot.violations,
                                     'violation',
                                     'violations')

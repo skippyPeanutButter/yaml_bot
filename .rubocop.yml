@@ -4,6 +4,14 @@ Documentation:
 # Metrics/MethodLength:
 #   Max: 15
 
+Metrics/LineLength:
+  # This will disable the rule completely, regardless what other options you put
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  # Strings in Ruby 2.3 >= are frozen by default
+  Enabled: false
+  
 Metrics/ClassLength:
   Enabled: false
   CountComments: false  # count full line comments?

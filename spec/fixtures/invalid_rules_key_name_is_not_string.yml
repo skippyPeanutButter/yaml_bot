@@ -1,0 +1,11 @@
+defaults:
+  required_key: false
+rules:
+  - key: 'language'
+    required_key: true
+    types: ['String']
+    value_whitelist: ['android', 'go', 'python', 'ruby']
+  - key: 'jenkins.sudo'
+    # This should cause a ValidationError, non-string key name
+  - key: 42
+    and_requires: ['jenkins.secrets_id']
