@@ -128,6 +128,10 @@ describe YamlBot::KeyBot do
     end
   end
 
+  describe '#get_object_value' do
+
+  end
+
   after :each do
     @keybot = nil
   end

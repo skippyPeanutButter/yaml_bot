@@ -58,11 +58,7 @@ module YamlBot
     # are in the yaml then check passes
     def check_or_requires
       return if key['or_requires'].nil?
-      alt_key = nil
-      key['or_requires'].each do |k|
-        alt_key = get_object_value(yaml_file, k)
-        break unless alt_key.nil?
-      end
+      alt_key = search_for_alternate_key(key)
       value = get_object_value(yaml_file, key['key'])
       @invalid = value.nil? && alt_key.nil?
     end
@@ -93,16 +89,6 @@ module YamlBot
       puts "Valid types include #{key['types']}"
     end
 
-    private
-
-    def value_within_list_of_types?(types, value)
-      types.any? do |type|
-        type_value = TYPE_MAP[type.downcase.to_sym]
-        type_value.each { |t| value.instance_of?(t) } if type_value.instance_of?(Array)
-        value.instance_of?(type_value)
-      end
-    end
-
     def get_object_value(yaml, key_addr)
       if !key_addr.index('.').nil? && key_addr.index('.') >= 0
         key1 = key_addr.split('.', 2)[0]
@@ -118,6 +104,25 @@ module YamlBot
         return yaml[key_addr]
       rescue StandardError => e
         puts "Caught exception #{e}!"
+      end
+    end
+
+    private
+
+    def search_for_alternate_key(key_map)
+      alt_key = nil
+      key_map['or_requires'].each do |k|
+        alt_key = get_object_value(yaml_file, k)
+        return alt_key unless alt_key.nil?
+      end
+      alt_key
+    end
+
+    def value_within_list_of_types?(types, value)
+      types.any? do |type|
+        type_value = TYPE_MAP[type.downcase.to_sym]
+        type_value.each { |t| value.instance_of?(t) } if type_value.instance_of?(Array)
+        value.instance_of?(type_value)
       end
     end
   end
