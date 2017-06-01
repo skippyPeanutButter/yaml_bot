@@ -15,6 +15,7 @@ script:
   - ./gradlew antHillBuild --info
 
 jenkins:
+  os: 'debian'
   use_gerrit: false
   sudo: true
   collect:

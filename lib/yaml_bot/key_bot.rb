@@ -70,7 +70,7 @@ module YamlBot
       value = ParseBot.get_object_value(yaml_file, key['key'])
       return if key['value_whitelist'].include?(value)
       @invalid = true
-      puts "Invalid value #{value} for whitelist #{key['value_whitelist']}"
+      puts "Invalid value #{value} for whitelist #{key['value_whitelist']}\n"
     end
 
     def check_val_blacklist
@@ -78,16 +78,17 @@ module YamlBot
       value = ParseBot.get_object_value(yaml_file, key['key'])
       return unless key['value_blacklist'].include?(value)
       @invalid = true
-      puts "Blacklisted value specified #{value}"
+      puts "Blacklisted value specified #{value}\n"
     end
 
     def check_types
       return if key['types'].nil?
       value = ParseBot.get_object_value(yaml_file, key['key'])
-      @invalid = !value_within_list_of_types?(key['types'], value)
+      @invalid = !value_is_a_valid_type?(key['types'], value)
+      puts "CHECKING #{key['key']} with value #{value} and invalid #{@invalid}"
       return unless @invalid
-      puts "Invalid value type specified: #{value.class}"
-      puts "Valid types include #{key['types']}"
+      puts "Invalid value type specified for key: #{key['key']}"
+      puts "#{value.class} given, valid types include #{key['types']}\n"
     end
 
     private
@@ -101,11 +102,11 @@ module YamlBot
       alt_key
     end
 
-    def value_within_list_of_types?(types, value)
+    def value_is_a_valid_type?(types, value)
       types.any? do |type|
         type_value = TYPE_MAP[type.downcase.to_sym]
-        type_value.each { |t| value.instance_of?(t) } if type_value.instance_of?(Array)
-        value.instance_of?(type_value)
+        return type_value.any? { |t| value.instance_of?(t) } if type_value.instance_of?(Array)
+        return true if value.instance_of?(type_value)
       end
     end
   end
