@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'yaml_bot/key_bot'
 
 describe YamlBot::KeyBot do
   describe '#validate' do
@@ -126,10 +127,6 @@ describe YamlBot::KeyBot do
         end
       end
     end
-  end
-
-  describe '#get_object_value' do
-
   end
 
   after :each do
