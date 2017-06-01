@@ -11,8 +11,14 @@ Metrics/LineLength:
 Style/FrozenStringLiteralComment:
   # Strings in Ruby 2.3 >= are frozen by default
   Enabled: false
-  
+
 Metrics/ClassLength:
   Enabled: false
   CountComments: false  # count full line comments?
   Max: 100
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/CyclomaticComplexity:
+  Max: 7

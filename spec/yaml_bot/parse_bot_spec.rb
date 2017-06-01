@@ -14,8 +14,8 @@ describe YamlBot::ParseBot do
           'language' => 'go',
           'jdk' => 'oraclejdk7',
           'jenkins.sudo' => true,
-          'jenkins.collect.artifacts' => ["**/App/build/**/*.apk"],
-          'jenkins.secrets' => [{"key" => "VAR_NAME", "pass" => "password" }]
+          'jenkins.collect.artifacts' => ['**/App/build/**/*.apk'],
+          'jenkins.secrets' => [{ 'key' => 'VAR_NAME', 'pass' => 'password' }]
         }.each do |key_address, expected_value|
           expect(YamlBot::ParseBot.get_object_value(@yaml, key_address)).to eq(expected_value)
         end

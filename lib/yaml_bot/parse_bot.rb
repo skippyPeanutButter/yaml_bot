@@ -8,14 +8,16 @@ module YamlBot
         return nil
       end
 
-      begin
-        return nil if yaml[key_addr].nil?
-        # Check if default value is a Boolean type
-        return false if yaml[key_addr] == 'false'
-        return yaml[key_addr]
-      rescue StandardError => e
-        puts "Caught exception #{e}!"
-      end
+      return to_boolean(yaml[key_addr]) if %w(true false).include?(yaml[key_addr])
+      yaml[key_addr]
+    rescue StandardError => e
+      puts "Caught exception #{e}!"
+    end
+
+    private_class_method
+
+    def self.to_boolean(val)
+      val == 'true'
     end
   end
 end
