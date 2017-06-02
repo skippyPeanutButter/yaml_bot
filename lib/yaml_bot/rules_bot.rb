@@ -5,7 +5,7 @@ module YamlBot
   class RulesBot
     attr_accessor :rules
 
-    def initialize(rules)
+    def initialize(rules = nil)
       @rules = rules
     end
 

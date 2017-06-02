@@ -3,7 +3,7 @@ require 'yaml_bot/key_bot'
 
 module YamlBot
   class ValidationBot
-    attr_accessor :rules, :yaml_file, :violations, :logger
+    attr_accessor :rules, :yaml_file, :violations
 
     def initialize(rules = nil, yaml_file = nil)
       @rules = rules || {}
