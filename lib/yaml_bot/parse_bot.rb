@@ -2,8 +2,7 @@ module YamlBot
   class ParseBot
     def self.get_object_value(yaml, key_addr)
       if !key_addr.index('.').nil? && key_addr.index('.') >= 0
-        key1 = key_addr.split('.', 2)[0]
-        key2 = key_addr.split('.', 2)[1]
+        key1, key2 = key_addr.split('.', 2)
         return get_object_value(yaml[key1], key2) if !yaml[key1].nil? && yaml[key1].instance_of?(Hash)
         return nil
       end
