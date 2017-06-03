@@ -38,7 +38,7 @@ Or install it yourself as:
 ### Usage
 
 Create a `.yamlbot.yml` file with a set of rules that you want to validate yaml
-files against [yamlbot file specification][yamlbot-spec].
+files against [yamlbot file specification](RULES_DEFINITION.md).
 
 Usage assuming the existence `.yamlbot.yml` in the current directory:
 
@@ -84,5 +84,3 @@ to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 The gem is available as open source under the terms of the [MIT
 License](http://opensource.org/licenses/MIT).
-
-[yamlbot-spec]: https://github.com/skippyPeanutButter/yaml_bot/wiki/Rules-file-specification
