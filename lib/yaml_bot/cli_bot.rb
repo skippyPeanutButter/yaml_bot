@@ -91,7 +91,7 @@ module YamlBot
         "\t-r, --rule-file rules\t\tThe rules you will be evaluating your "\
         'yaml against',
         "\t-f, --file file\t\t\tThe file to validate against",
-        "\t-c, --color\t\t\tEnable colored output",
+        # "\t-c, --color\t\t\tEnable colored output",
         "\t-h, --help\t\t\thelp"
       ].join("\n")
       puts msg
