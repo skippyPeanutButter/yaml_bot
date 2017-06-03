@@ -1,0 +1,4 @@
+defaults:
+  required_key: true
+rules:
+  - key: 'language'

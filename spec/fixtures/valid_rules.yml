@@ -1,0 +1,18 @@
+defaults:
+  required_key: false
+  types: ['String', 'List']
+rules:
+  - key: 'language'
+    required_key: true
+    types: ['String']
+    value_whitelist: ['android', 'go', 'python', 'ruby']
+  - key: 'jenkins.sudo'
+    types: ['Boolean']
+  - key: 'jenkins.secrets'
+    types: ['List']
+    and_requires: ['jenkins.secrets_id']
+  - key: 'jdk'
+    types: ['String']
+  - key: 'jenkins.collect.artifacts'
+    types: ['List', 'String']
+  - key: 'jenkins.os'

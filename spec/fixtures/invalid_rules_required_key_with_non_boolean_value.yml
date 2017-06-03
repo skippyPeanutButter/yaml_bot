@@ -1,0 +1,7 @@
+rules:
+  - key: 'language'
+    required_key: derp
+    types: ['String']
+    value_whitelist: ['android', 'go', 'python', 'ruby']
+  - key: 'jenkins.sudo'
+    required_key: true

@@ -1,0 +1,5 @@
+rules:
+  - key: 'language'
+    required_key: true
+    types: ['String']
+    value_whitelist: ['android', 'go', 'python', 'ruby']

@@ -26,9 +26,9 @@ parser = OptionParser.new do |opts|
     options[:file] = file
   end
 
-  opts.on('-c', '--no-color', 'Disable colored output') do
-    options[:no_color] = true
-  end
+  # opts.on('-c', '--no-color', 'Disable colored output') do
+  #   options[:no_color] = true
+  # end
 
   opts.on('-h', '--help', 'help') do
     puts parser

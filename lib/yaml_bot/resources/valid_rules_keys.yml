@@ -1,0 +1,8 @@
+---
+- key
+- required_key
+- and_requires
+- or_requires
+- value_whitelist
+- value_blacklist
+- types

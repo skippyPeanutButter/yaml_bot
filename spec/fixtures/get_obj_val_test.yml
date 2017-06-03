@@ -1,0 +1,15 @@
+language: go
+jdk: oraclejdk7
+install: "sudo yum install python-devel"
+
+script: "go build test.go"
+
+jenkins:
+  sudo: 'true'
+  collect:
+    artifacts:
+      - "**/App/build/**/*.apk"
+  secrets_id: key_name
+  secrets:
+    - key: VAR_NAME
+      pass: password
