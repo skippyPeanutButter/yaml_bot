@@ -22,10 +22,10 @@ module YamlBot
     ].freeze
 
     def initialize(key, yaml_file, defaults)
-      @key = key
-      @yaml_file = yaml_file
       @defaults = defaults || {}
       @invalid = false
+      @key = @defaults.merge(key)
+      @yaml_file = yaml_file
     end
 
     def validate
@@ -37,10 +37,9 @@ module YamlBot
     end
 
     def check_if_key_is_required
-      rules = defaults.merge(key)
       yaml_key = ParseBot.get_object_value(yaml_file, key['key'])
-      return unless rules['required_key'] && yaml_key.nil?
-      @invalid = true if rules['or_requires'].nil?
+      return unless key['required_key'] && yaml_key.nil?
+      @invalid = true if key['or_requires'].nil?
     end
 
     def check_and_requires
@@ -84,8 +83,8 @@ module YamlBot
     def check_types
       return if key['types'].nil?
       value = ParseBot.get_object_value(yaml_file, key['key'])
+      return if value.nil?
       @invalid = !value_is_a_valid_type?(key['types'], value)
-      puts "CHECKING #{key['key']} with value #{value} and invalid #{@invalid}"
       return unless @invalid
       puts "Invalid value type specified for key: #{key['key']}"
       puts "#{value.class} given, valid types include #{key['types']}\n"

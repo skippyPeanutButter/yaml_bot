@@ -13,7 +13,7 @@ describe YamlBot::KeyBot do
         rules = YAML.load_file(rules_file_name)
         defaults = rules['defaults']
         @keys = rules['rules']
-        @keybot = YamlBot::KeyBot.new(nil, yaml, defaults)
+        @keybot = YamlBot::KeyBot.new({}, yaml, defaults)
       end
 
       it 'should return 0 with a valid key' do

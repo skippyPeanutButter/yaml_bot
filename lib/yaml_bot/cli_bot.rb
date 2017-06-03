@@ -16,6 +16,7 @@ module YamlBot
       check_cli_options
       load_rules
       load_yaml
+      validate_rules
       scan_yaml
       print_results
       @validation_bot.violations.zero? ? 0 : 1
@@ -56,10 +57,16 @@ module YamlBot
       exit 1
     end
 
+    def validate_rules
+      puts 'Validating rules file...'
+      @rules_bot.validate_rules
+      puts "Rules file validated...\n\n"
+    end
+
     def scan_yaml
       puts 'Beginning scan...'
       @validation_bot.scan
-      puts 'Finished scan...'
+      puts "Finished scan...\n\n"
     end
 
     def pluralize(n, singular, plural = nil)

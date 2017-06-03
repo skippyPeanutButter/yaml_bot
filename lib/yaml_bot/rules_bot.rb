@@ -19,7 +19,6 @@ module YamlBot
         msg = "The rules section of a rules file must define a list of keys.\n"
         raise ValidationError, msg
       end
-      puts 'Rules file validated.'
     end
 
     private

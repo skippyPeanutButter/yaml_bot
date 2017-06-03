@@ -1,5 +1,5 @@
 language: java
-jdk: true
+jdk: oraclejdk7
 install: "sudo yum install python-devel"
 
 script: "go build test.go"
