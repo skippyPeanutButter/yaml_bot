@@ -39,18 +39,20 @@ module YamlBot
     def check_if_key_is_required
       yaml_key = ParseBot.get_object_value(yaml_file, key['key'])
       return unless key['required_key'] && yaml_key.nil?
-      @invalid = true if key['or_requires'].nil?
+      return unless key['or_requires'].nil?
+      @invalid = true
+      puts "VIOLATION: Missing required key: #{key['key']}"
     end
 
     def check_and_requires
       yaml_key = ParseBot.get_object_value(yaml_file, key['key'])
       return if yaml_key.nil? || key['and_requires'].nil?
       key['and_requires'].each do |k|
-        result = ParseBot.get_object_value(yaml_file, k)
-        if result.nil?
-          @invalid = true
-          break
-        end
+        next unless ParseBot.get_object_value(yaml_file, k).nil?
+        @invalid = true
+        puts "VIOLATION: Key #{key['key']} requires that the following key(s)"
+        puts "also be defined: #{key['and_requires']}"
+        break
       end
     end
 
@@ -62,6 +64,9 @@ module YamlBot
       alt_key = search_for_alternate_key(key)
       value = ParseBot.get_object_value(yaml_file, key['key'])
       @invalid = value.nil? && alt_key.nil?
+      return unless @invalid
+      puts "VIOLATION: Key #{key['key']} or the following key(s)"
+      puts "must be defined: #{key['and_requires']}"
     end
 
     def check_val_whitelist
@@ -69,7 +74,7 @@ module YamlBot
       value = ParseBot.get_object_value(yaml_file, key['key'])
       return if key['value_whitelist'].include?(value)
       @invalid = true
-      puts "Invalid value #{value} for whitelist #{key['value_whitelist']}\n"
+      puts "VIOLATION: Invalid value #{value} for whitelist #{key['value_whitelist']}\n"
     end
 
     def check_val_blacklist
@@ -77,7 +82,7 @@ module YamlBot
       value = ParseBot.get_object_value(yaml_file, key['key'])
       return unless key['value_blacklist'].include?(value)
       @invalid = true
-      puts "Blacklisted value specified #{value}\n"
+      puts "VIOLATION: Blacklisted value specified #{value}\n"
     end
 
     def check_types
@@ -86,7 +91,7 @@ module YamlBot
       return if value.nil?
       @invalid = !value_is_a_valid_type?(key['types'], value)
       return unless @invalid
-      puts "Invalid value type specified for key: #{key['key']}"
+      puts "VIOLATION: Invalid value type specified for key: #{key['key']}"
       puts "#{value.class} given, valid types include #{key['types']}\n"
     end
 
