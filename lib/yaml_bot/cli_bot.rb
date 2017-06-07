@@ -36,11 +36,11 @@ module YamlBot
 
     def load_rules
       rules_file = @options[:rules] || '.yamlbot.yml'
-      raise FileNotFoundError unless File.exist?(rules_file)
+      raise IOError unless File.exist?(rules_file)
       rules = YAML.load_file(rules_file)
       @rules_bot.rules = rules
       @validation_bot.rules = rules
-    rescue FileNotFoundError
+    rescue IOError
       $stderr.puts "Unable to locate file: #{rules_file}"
       $stderr.puts 'Create a .yamlbot.yml file in the current directory'
       $stderr.puts 'or specify a rules file with the -r option'
@@ -49,9 +49,9 @@ module YamlBot
 
     def load_yaml
       raise StandardError, 'No YAML file specified' if @options[:file].nil?
-      raise FileNotFoundError unless File.exist?(@options[:file])
+      raise IOError unless File.exist?(@options[:file])
       @validation_bot.yaml_file = YAML.load_file(@options[:file])
-    rescue FileNotFoundError
+    rescue IOError
       $stderr.puts "Unable to locate file: #{@options[:file]}"
       $stderr.puts 'Pass a YAML file to validate with the -f option'
       exit 1
