@@ -3,6 +3,8 @@ require 'yaml_bot/rules_bot'
 require 'yaml_bot/validation_bot'
 
 module YamlBot
+  # The CLIBOT class handles the commandline options passed, and is
+  # the entrypoint to the program.
   class CLIBot
     attr_accessor :options, :logger_bot, :rules_bot, :validation_bot
 
@@ -12,6 +14,8 @@ module YamlBot
       @validation_bot = ValidationBot.new
     end
 
+    # Entry method responsible for starting the scan of a yaml file.
+    # @return [Integer] the number of violations a yaml file contains
     def run
       check_cli_options
       load_rules

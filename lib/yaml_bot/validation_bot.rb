@@ -2,6 +2,8 @@ require 'yaml'
 require 'yaml_bot/key_bot'
 
 module YamlBot
+  # ValidationBot scans a yamlbot and validates that it is semantically
+  # correct according to the given yamlbot rules file.
   class ValidationBot
     attr_accessor :rules, :yaml_file, :violations
 

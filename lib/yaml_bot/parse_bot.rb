@@ -1,4 +1,6 @@
 module YamlBot
+  # ParseBot is solely responsible for retrieving a value from
+  # a yaml file give a 'key address' in the form of 'key1.key2.key3.etc'.
   class ParseBot
     def self.get_object_value(yaml, key_addr)
       if !key_addr.index('.').nil? && key_addr.index('.') >= 0

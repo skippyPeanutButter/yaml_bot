@@ -1,6 +1,8 @@
 require 'yaml_bot/parse_bot'
 
 module YamlBot
+  # KeyBot takes a keymap from a yamlbot rules file and validates
+  # the specified yaml file against the rules of that map.
   class KeyBot
     attr_accessor :defaults, :invalid, :key, :yaml_file
 

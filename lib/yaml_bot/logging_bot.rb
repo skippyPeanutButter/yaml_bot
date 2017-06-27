@@ -1,5 +1,10 @@
 module YamlBot
+  # LoggingBot is responsible for outputting information during
+  # the yaml file validation process.
+  # DEPRECATED
   class LoggingBot
+    # Denotes errors that occur when attempting to log output.
+    # Used strictly by LoggingBot.
     class LoggingError < RuntimeError
       def initialize(msg)
         super(msg)
