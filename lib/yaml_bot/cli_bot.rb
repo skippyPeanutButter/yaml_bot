@@ -73,13 +73,13 @@ module YamlBot
       puts "Finished scan...\n\n"
     end
 
-    def pluralize(n, singular, plural = nil)
-      if n == 1
+    def pluralize(num, singular, plural = nil)
+      if num == 1
         "1 #{singular}"
       elsif plural
-        "#{n} #{plural}"
+        "#{num} #{plural}"
       else
-        "#{n} #{singular}s"
+        "#{num} #{singular}s"
       end
     end
 

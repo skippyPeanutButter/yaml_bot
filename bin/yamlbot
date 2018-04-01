@@ -1,15 +1,15 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift(File.dirname(File.realpath(__FILE__)) + '/../lib')
+$LOAD_PATH.unshift(File.dirname(File.realpath(__dir__)) + '/../lib')
 
 require 'optparse'
 require 'yaml_bot'
 require 'benchmark'
 
-banner = <<-eos
-I am YamlBot feed me YAML!
+banner = <<~BANNER
+  I am YamlBot feed me YAML!
 
-eos
+BANNER
 
 options = {}
 parser = OptionParser.new do |opts|

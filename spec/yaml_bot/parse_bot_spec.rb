@@ -4,8 +4,8 @@ require 'yaml_bot/parse_bot'
 describe YamlBot::ParseBot do
   describe '::get_object_value' do
     before :each do
-      yaml_file = '/../fixtures/get_obj_val_test.yml'
-      @yaml = YAML.load_file(File.dirname(File.realpath(__FILE__)) + yaml_file)
+      yaml_file = '/fixtures/get_obj_val_test.yml'
+      @yaml = YAML.load_file(File.dirname(File.realpath(__dir__)) + yaml_file)
     end
 
     context 'Successfully retrieve value from Hash' do

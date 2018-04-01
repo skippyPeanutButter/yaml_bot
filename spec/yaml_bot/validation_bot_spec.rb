@@ -18,16 +18,16 @@ describe YamlBot::ValidationBot do
 
     context 'yaml file not successfully validated against specified rules' do
       it 'should return the number of violations in the yaml file' do
-        @yaml_bot.rules = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
-                                         '/../fixtures/valid_rules.yml')
+        @yaml_bot.rules = YAML.load_file(File.dirname(File.realpath(__dir__)) +
+                                         '/fixtures/valid_rules.yml')
         {
-          '/../fixtures/validation_test1.yml' => 1,
-          '/../fixtures/validation_test2.yml' => 2,
-          '/../fixtures/validation_test3.yml' => 3,
-          '/../fixtures/validation_test4.yml' => 4,
-          '/../fixtures/validation_test5.yml' => 5
+          '/fixtures/validation_test1.yml' => 1,
+          '/fixtures/validation_test2.yml' => 2,
+          '/fixtures/validation_test3.yml' => 3,
+          '/fixtures/validation_test4.yml' => 4,
+          '/fixtures/validation_test5.yml' => 5
         }.each do |yaml_file, num_of_violations|
-          yaml = File.dirname(File.realpath(__FILE__)) + yaml_file
+          yaml = File.dirname(File.realpath(__dir__)) + yaml_file
           @yaml_bot.yaml_file = YAML.load_file(yaml)
           expect(@yaml_bot.scan).to eq(num_of_violations)
           @yaml_bot.violations = 0

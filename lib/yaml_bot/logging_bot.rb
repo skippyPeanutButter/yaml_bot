@@ -15,9 +15,9 @@ module YamlBot
                 yellow: "\033[33m",
                 red: "\033[31m",
                 reset: "\033[0m" }.freeze
-    LOGLEVEL = { info: [:info, :warn, :error],
-                 warn: [:warn, :error],
-                 error: [:error] }.freeze
+    LOGLEVEL = { info: %i[info warn error],
+                 warn: %i[warn error],
+                 error: %i[error] }.freeze
 
     attr_accessor :log_file, :log_level
 
