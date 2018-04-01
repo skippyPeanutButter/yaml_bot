@@ -2,6 +2,8 @@ require 'yaml'
 require 'yaml_bot/validation_error'
 
 module YamlBot
+  # RulesBot accepts a yamlbot rules file and validates that it is
+  # inline with the specification given in the RULES_DEFINITION.md file.
   class RulesBot
     attr_accessor :rules
 
