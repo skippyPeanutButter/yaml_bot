@@ -14,13 +14,13 @@ module YamlBot
       boolean: [TrueClass, FalseClass]
     }.freeze
 
-    VALIDATION_CHECKS = [
-      :check_if_key_is_required,
-      :check_and_requires,
-      :check_or_requires,
-      :check_val_whitelist,
-      :check_val_blacklist,
-      :check_types
+    VALIDATION_CHECKS = %i[
+      check_if_key_is_required
+      check_and_requires
+      check_or_requires
+      check_val_whitelist
+      check_val_blacklist
+      check_types
     ].freeze
 
     def initialize(key, yaml_file, defaults)

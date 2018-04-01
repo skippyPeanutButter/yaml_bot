@@ -10,4 +10,4 @@ task :rubocop do
   cli.run
 end
 
-task default: [:rubocop, :spec]
+task default: %i[rubocop spec]

@@ -9,7 +9,7 @@ module YamlBot
         return nil
       end
 
-      return to_boolean(yaml[key_addr]) if %w(true false).include?(yaml[key_addr])
+      return to_boolean(yaml[key_addr]) if %w[true false].include?(yaml[key_addr])
       yaml[key_addr]
     rescue StandardError => e
       puts "Caught exception #{e}!"

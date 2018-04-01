@@ -39,8 +39,8 @@ module YamlBot
     end
 
     def validate_rules_keys(key_map)
-      valid_keys = YAML.load_file(File.dirname(File.realpath(__FILE__)) +
-                   '/resources/valid_rules_keys.yml')
+      valid_keys = YAML.load_file(File.dirname(File.realpath(__dir__)) +
+                   '/yaml_bot/resources/valid_rules_keys.yml')
       invalid_keys = []
       key_map.keys.each { |k| invalid_keys << k unless valid_keys.include?(k) }
       return if invalid_keys.empty?

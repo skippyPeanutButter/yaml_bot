@@ -22,3 +22,10 @@ Metrics/AbcSize:
 
 Metrics/CyclomaticComplexity:
   Max: 7
+
+Metrics/BlockLength:
+  Exclude:
+    - "**/*_spec.rb"
+
+Style/StderrPuts:
+  Enabled: false
